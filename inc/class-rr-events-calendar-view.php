@@ -21,7 +21,7 @@ class RR_Events_Calendar_View {
 		add_action( 'wp_ajax_nopriv_rr_events_calendar', array( $this, 'ajax' ) );
 
 		// Register shortcode
-		add_shortcode( 'rr-events-calendar', array( $this, 'output' ) );
+		add_shortcode( 'events-calendar', array( $this, 'output' ) );
 	}
 
 	/**
