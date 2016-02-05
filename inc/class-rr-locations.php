@@ -17,7 +17,6 @@ class RR_Locations {
 		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
 		add_action( 'save_post',      array( $this, 'meta_boxes_save' ), 10, 2 );
 		add_filter( 'the_content',    array( $this, 'the_content' ) );
-//		register_activation_hook( dirname( dirname( __FILE__ ) ) . '/events-calendar-for-make-benefit-wordpress.php' , array( $this, 'add_options' ) );
 	}
 
 	/**
@@ -150,8 +149,17 @@ class RR_Locations {
 			}
 
 			// Sanitize and store the data
-$_location = $_POST['location'];
-			update_post_meta( $post_id, '_location', $_location );
+			foreach ( $_POST['location'] as $key => $value ) {
+				if (
+					in_array( $key, array( 'longitude', 'latitude', 'width', 'height' ) )
+					&&
+					is_numeric( $value )
+				) {
+					$location[$key] = $value;
+				}
+			}
+
+			update_post_meta( $post_id, '_location', $location );
 		}
 
 	}
