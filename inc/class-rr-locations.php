@@ -16,7 +16,8 @@ class RR_Locations {
 	public function __construct() {
 		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
 		add_action( 'save_post',      array( $this, 'meta_boxes_save' ), 10, 2 );
-		//
+		add_filter( 'the_content',    array( $this, 'the_content' ) );
+//		register_activation_hook( dirname( dirname( __FILE__ ) ) . '/events-calendar-for-make-benefit-wordpress.php' , array( $this, 'add_options' ) );
 	}
 
 	/**
@@ -52,8 +53,22 @@ class RR_Locations {
 		} else {
 			$longitude = '13.466479';
 		}
+		if ( isset( $location['width'] ) ) {
+			$width = $location['width'];
+		} else {
+			$width = '640';
+		}
+		if ( isset( $location['height'] ) ) {
+			$height = $location['height'];
+		} else {
+			$height = '480';
+		}
 
-		$embed_url = 'https://maps.google.com/maps?q=' . $latitude . ',' . $longitude . '&z=14&output=embed&iwloc=0';
+		if ( '' != $latitude && '' != $longitude ) {
+			$embed_url = 'https://maps.google.com/maps?q=' . $latitude . ',' . $longitude . '&z=14&output=embed&iwloc=0';
+		} else {
+			$embed_url = '';
+		}
 
 		?>
 		<style>
@@ -80,6 +95,18 @@ class RR_Locations {
 				<td><label for="longitude"><strong><?php _e( 'Longitude', 'rrewc' ); ?></strong></label></td>
 				<td>
 					<input type="text" name="location[longitude]" id="longitude" value="<?php echo esc_attr( $longitude ); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<td><label for="width"><strong><?php _e( 'Width', 'rrewc' ); ?></strong></label></td>
+				<td>
+					<input type="text" name="location[width]" id="width" value="<?php echo esc_attr( $width ); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<td><label for="height"><strong><?php _e( 'Height', 'rrewc' ); ?></strong></label></td>
+				<td>
+					<input type="text" name="location[height]" id="height" value="<?php echo esc_attr( $height ); ?>" />
 				</td>
 			</tr>
 		</table>
@@ -115,7 +142,7 @@ class RR_Locations {
 	public function meta_boxes_save( $post_id, $post ) {
 
 		// Only save if correct post data sent
-		if ( isset( $_POST['_location'] ) ) {
+		if ( isset( $_POST['location'] ) ) {
 
 			// Do nonce security check
 			if ( ! wp_verify_nonce( $_POST['location-nonce'], __FILE__ ) ) {
@@ -123,10 +150,37 @@ class RR_Locations {
 			}
 
 			// Sanitize and store the data
-			$_example = wp_kses_post( $_POST['_location'] );
-			update_post_meta( $post_id, '_location', $_example );
+$_location = $_POST['location'];
+			update_post_meta( $post_id, '_location', $_location );
 		}
 
+	}
+
+	public function the_content( $content ) {
+
+		$location = get_post_meta( get_the_ID(), '_location', true );
+		if ( isset( $location['latitude'] ) ) {
+			$latitude = $location['latitude'];
+		}
+		if ( isset( $location['longitude'] ) ) {
+			$longitude = $location['longitude'];
+		}
+
+		if ( '' != $latitude && '' != $longitude ) {
+			$embed_url = 'https://maps.google.com/maps?q=' . $latitude . ',' . $longitude . '&z=14&output=embed&iwloc=0';
+			$content .= '<iframe src="' . esc_url( $embed_url ) . '" ';
+
+			if ( isset( $location['width'] ) ) {
+				$content .= ' width="' . esc_attr( $location['width'] ) . '"';
+			}
+			if ( isset( $location['height'] ) ) {
+				$content .= ' height="' . esc_attr( $location['height'] ) . '"';
+			}
+
+			$content .= 'frameborder="0" allowfullscreen></iframe>';
+		}
+
+		return $content;
 	}
 
 }
