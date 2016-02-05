@@ -1,9 +1,42 @@
 <?php
 
 
+function ryanhellyer_post_type_activities_in_group() {
+    if ( ! bp_is_active( 'activity' ) ) {
+        return;
+    }
+
+    add_post_type_support( 'page', 'buddypress-activity' );
+
+    bp_activity_set_post_type_tracking_args( 'page', array(
+        'action_id' => 'new_ryanhellyer_page',
+    ) );
+}
+add_action( 'bp_init', 'ryanhellyer_post_type_activities_in_group' );
+
+function ryanhellyer_activity_add( $args = array() ) {
+    if ( empty( $args['type'] ) || 'new_ryanhellyer_page' !== $args['type'] ) {
+        return $args;
+    }
+
+    // if posted in a group...
+    if ( bp_is_group() ) {
+        $args['component'] = 'groups';
+        $args['item_id']   = 2;//groups_get_current_group()->id;
+    }
+
+    return $args;
+}
+add_filter( 'bp_before_activity_add_parse_args', 'ryanhellyer_activity_add', 10, 1 );
+
+
+
+
+
 class RR_BuddyPress {
 
 	public function __construct() {
+return;
 		add_post_type_support( 'event', 'buddypress-activity' );
 		add_action( 'bp_activity_before_save', array( $this, 'add_activity' ) );
 	}
