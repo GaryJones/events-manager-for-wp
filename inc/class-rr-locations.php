@@ -164,28 +164,40 @@ class RR_Locations {
 
 	}
 
+	/**
+	 * Add the map to the content.
+	 *
+	 * @param  string  $content  The post content
+	 * @return string  The modified post content
+	 */
 	public function the_content( $content ) {
 
+		// Bail out now if we are not on an event
+		if( 'event' != get_post_type() ) {
+			return;
+		}
+
+
 		$location = get_post_meta( get_the_ID(), '_location', true );
-		if ( isset( $location['latitude'] ) ) {
+		if ( isset( $location['latitude'] ) && isset( $location['longitude'] ) ) {
+
 			$latitude = $location['latitude'];
-		}
-		if ( isset( $location['longitude'] ) ) {
 			$longitude = $location['longitude'];
-		}
 
-		if ( '' != $latitude && '' != $longitude ) {
-			$embed_url = 'https://maps.google.com/maps?q=' . $latitude . ',' . $longitude . '&z=14&output=embed&iwloc=0';
-			$content .= '<iframe src="' . esc_url( $embed_url ) . '" ';
+			if ( '' != $latitude && '' != $longitude ) {
 
-			if ( isset( $location['width'] ) ) {
-				$content .= ' width="' . esc_attr( $location['width'] ) . '"';
+				$embed_url = 'https://maps.google.com/maps?q=' . $latitude . ',' . $longitude . '&z=14&output=embed&iwloc=0';
+				$content .= '<iframe src="' . esc_url( $embed_url ) . '" ';
+
+				if ( isset( $location['width'] ) ) {
+					$content .= ' width="' . esc_attr( $location['width'] ) . '"';
+				}
+				if ( isset( $location['height'] ) ) {
+					$content .= ' height="' . esc_attr( $location['height'] ) . '"';
+				}
+
+				$content .= 'frameborder="0" allowfullscreen></iframe>';
 			}
-			if ( isset( $location['height'] ) ) {
-				$content .= ' height="' . esc_attr( $location['height'] ) . '"';
-			}
-
-			$content .= 'frameborder="0" allowfullscreen></iframe>';
 		}
 
 		return $content;

@@ -1,45 +1,125 @@
 <?php
 
-
 class RR_BuddyPress {
 
+	const META_KEY  = 'group';
+	const POST_TYPE = 'event';
+
+	/**
+	 * Class constructor.
+	 */
 	public function __construct() {
-		add_post_type_support( 'event', 'buddypress-activity' );
-		add_action( 'bp_activity_before_save', array( $this, 'add_activity' ) );
+		add_action( 'bp_init',                           array( $this, 'post_type_activities_in_group' ) );
+		add_filter( 'bp_before_activity_add_parse_args', array( $this, 'activity_add' ), 10, 1 );
+		add_action( 'add_meta_boxes',                    array( $this, 'add_metabox' ) );
+	}
+
+	/**
+	 * Add post-type creation to activity stream.
+	 */
+	public function post_type_activities_in_group() {
+		if ( ! bp_is_active( 'activity' ) ) {
+			return;
+		}
+
+		add_post_type_support( self::POST_TYPE, 'buddypress-activity' );
+
 	}
 
 	/**
 	 * Add activity.
 	 *
-	 * @param  object  $activity
+	 * @param  array  $args
+	 * @return array  The modified arguments
 	 */
-	public function add_activity( $activity ) {
+	public function activity_add( $args = array() ) {
 
-		// Bail out if not saving an event
-		if ( 'new_events' != $activity->type ) {
-			return;
+		if ( empty( $args['type'] ) || 'new_' . self::POST_TYPE !== $args['type'] ) {
+			return $args;
 		}
 
-		$post_id = $activity->secondary_item_id;
-		$current_user = wp_get_current_user();
-		$post = get_post( $post_id );
-		$excerpt = $post->post_excerpt;
-		if ( '' == $excerpt ) {
-			$excerpt = $post->post_content;
+		// If to be posted in a group...
+		$group_id = $this->meta_boxes_save( get_the_ID() );
+		if ( '' != $group_id ) {
+			$group_id = absint( $group_id );
+			$args['component'] = 'groups';
+			$args['item_id']   = $group_id;
 		}
 
-		// Save the activity
-		$args = array(
-		//	'id'                => '',
-			'action'            => '<a href="' . esc_url( get_author_posts_url( $current_user->ID, $current_user->user_nicename ) ) . '">' . $current_user->display_name . '</a>' . __( ' did something', 'XXX' ),
-			'content'           => $excerpt,
-			'component'         => 'groups',
-			'type'              => 'activity_update',
-			'item_id'           => 2, // The group ID
-			'secondary_item_id' => $post_id, // Post ID
+		return $args;
+	}
+
+	/**
+	 * Add admin metabox.
+	 */
+	public function add_metabox() {
+		add_meta_box(
+			self::META_KEY, // ID
+			__( 'Group', 'rrewc' ), // Title
+			array(
+				$this,
+				'meta_box', // Callback to method to display HTML
+			),
+			self::POST_TYPE, // Post type
+			'side', // Context, choose between 'normal', 'advanced', or 'side'
+			'high'  // Position, choose between 'high', 'core', 'default' or 'low'
 		);
+	}
 
-		bp_activity_add( $args );
+	/**
+	 * Output the meta box.
+	 */
+	public function meta_box() {
+		?>
+
+		<p>
+			<label for="<?php echo esc_attr( '_' . self::META_KEY ); ?>"><strong><?php _e( 'Select a group', 'rrewc' ); ?></strong></label>
+			<br />
+			<select name="<?php echo esc_attr( '_' . self::META_KEY ); ?>" id="<?php echo esc_attr( '_' . self::META_KEY ); ?>"><?php
+
+			$groups = BP_Groups_Group::get(array(
+				'type'     =>'alphabetical',
+				'per_page' =>999
+			));
+			echo '<option value="">' . esc_html__( 'None', 'rrewc' ) . '</option>';
+			foreach ( $groups['groups'] as $key => $group ) {
+				echo '<option ' . selected( $group->id, get_post_meta( get_the_ID(), '_' . self::META_KEY, true ), false ) . ' value="' . esc_attr( $group->id ) . '">' . esc_html( $group->name ) . '</option>';
+			}
+			?>
+
+			</select>
+			<input type="hidden" id="<?php echo esc_attr( self::META_KEY . '-nonce' ); ?>" name="<?php echo esc_attr( self::META_KEY . '-nonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( __FILE__ ) ); ?>">
+		</p><?php
+	}
+
+	/**
+	 * Save opening times meta box data.
+	 *
+	 * @param  int  $post_id   The post ID
+	 * @return int  $group_id  The group ID
+	 */
+	public function meta_boxes_save( $post_id ) {
+
+		// Only save if correct post data sent
+		if ( isset( $_POST['_' . self::META_KEY] ) ) {
+
+			// Do nonce security check
+			if ( ! wp_verify_nonce( $_POST[self::META_KEY . '-nonce'], __FILE__ ) ) {
+				return;
+			}
+
+			// Sanitize and store the data
+			if (
+				is_numeric( $_POST['_' . self::META_KEY] )
+				||
+				'' == $_POST['_' . self::META_KEY]
+			) {
+				$group_id = $_POST['_' . self::META_KEY];
+				update_post_meta( $post_id, '_' . self::META_KEY, $value );
+			}
+		}
+
+		return $group_id;
 	}
 
 }
