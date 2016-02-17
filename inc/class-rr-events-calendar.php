@@ -16,7 +16,7 @@ class RR_Events_Calendar {
 	public function __construct() {
 
 		// Fire on activation
-		register_activation_hook( __FILE__, array( $this, 'activation' ) );
+		register_activation_hook( RR_EVENTS_CALENDAR_PLUGIN_FILE, array( $this, 'activation' ) );
 
 		// Load the plugin base
 		add_action( 'plugins_loaded', array( $this, 'init' ) );	
@@ -26,6 +26,7 @@ class RR_Events_Calendar {
 	 * Flush the WordPress permalink rewrite rules on activation.
 	 */
 	public function activation() {
+		$this->post_type();
 		flush_rewrite_rules();
 	}
 
