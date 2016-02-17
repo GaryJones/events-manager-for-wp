@@ -32,6 +32,7 @@ Copyright 2005-2015 Automattic, Inc.
 define( 'RR_EVENTS_CALENDAR_VERSION', '1.1.0' );
 define( 'RR_EVENTS_CALENDAR_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RR_EVENTS_CALENDAR_URL', plugin_dir_url( __FILE__ ) );
+define( 'RR_EVENTS_CALENDAR_PLUGIN_FILE', __FILE__ );
 
 /**
  * Autoload the classes.
