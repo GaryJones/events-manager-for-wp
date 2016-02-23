@@ -12,12 +12,14 @@ class RR_BuddyPress {
 		add_action( 'bp_init',                           array( $this, 'post_type_activities_in_group' ) );
 		add_filter( 'bp_before_activity_add_parse_args', array( $this, 'activity_add' ), 10, 1 );
 		add_action( 'add_meta_boxes',                    array( $this, 'add_metabox' ) );
+		add_action( 'save_post',                         array( $this, 'meta_boxes_save' ), 10, 2 );
 	}
 
 	/**
 	 * Add post-type creation to activity stream.
 	 */
 	public function post_type_activities_in_group() {
+
 		if ( ! bp_is_active( 'activity' ) ) {
 			return;
 		}
@@ -38,7 +40,7 @@ class RR_BuddyPress {
 			return $args;
 		}
 
-		// If to be posted in a group...
+		// If to be posted in a group... (we need to save it here, because otherwise the normal post_save functionality won't have fired yet)
 		$group_id = $this->meta_boxes_save( get_the_ID() );
 		if ( '' != $group_id ) {
 			$group_id = absint( $group_id );
@@ -55,7 +57,7 @@ class RR_BuddyPress {
 	public function add_metabox() {
 		add_meta_box(
 			self::META_KEY, // ID
-			__( 'Group', 'rrewc' ), // Title
+			__( 'BuddyPress group', 'rrewc' ), // Title
 			array(
 				$this,
 				'meta_box', // Callback to method to display HTML
@@ -73,7 +75,7 @@ class RR_BuddyPress {
 		?>
 
 		<p>
-			<label for="<?php echo esc_attr( '_' . self::META_KEY ); ?>"><strong><?php _e( 'Select a group', 'rrewc' ); ?></strong></label>
+			<label for="<?php echo esc_attr( '_' . self::META_KEY ); ?>"><strong><?php _e( 'Select a group activity stream to add the event to.', 'rrewc' ); ?></strong></label>
 			<br />
 			<select name="<?php echo esc_attr( '_' . self::META_KEY ); ?>" id="<?php echo esc_attr( '_' . self::META_KEY ); ?>"><?php
 
@@ -98,7 +100,8 @@ class RR_BuddyPress {
 	 * @param  int  $post_id   The post ID
 	 * @return int  $group_id  The group ID
 	 */
-	public function meta_boxes_save( $post_id ) {
+	public function meta_boxes_save( $post_id, $post ) {
+		$group_id = null;
 
 		// Only save if correct post data sent
 		if ( isset( $_POST['_' . self::META_KEY] ) ) {
@@ -115,7 +118,7 @@ class RR_BuddyPress {
 				'' == $_POST['_' . self::META_KEY]
 			) {
 				$group_id = $_POST['_' . self::META_KEY];
-				update_post_meta( $post_id, '_' . self::META_KEY, $value );
+				update_post_meta( $post_id, '_' . self::META_KEY, $group_id );
 			}
 		}
 
