@@ -89,26 +89,20 @@ class EM4WP_Post_Mover {
 
 		// Get the tags from the post we are copying
 		$sourcetags = wp_get_post_tags( $source_id, array( 'fields' => 'names' ) );
-		$source_blog_id  = get_current_blog_id();
 
 		// Get the categories for the post
 //		$source_categories = mpd_get_objects_of_post_categories( $source_id, $mpd_process_info['post_type']);
 
 //		$featured_image    = mpd_get_featured_image_from_source( $source_id );
 
-		// If we are copying the sourse post to another site on the network we will collect data about those 
-		// images.
-		if ( $to != $source_blog_id ) {
-
+		// Collect data about attached images.
 //			$attached_images = mpd_get_images_from_the_content( $source_id );
 
 			if($attached_images){
 //				$attached_images_alt_tags   = mpd_get_image_alt_tags($attached_images);
 			}
 
-		} else{
-			$attached_images = false;
-		}
+//		}
 
 		////////////////////////////////////////////////
 		// Tell WordPress to work in the destination site
@@ -134,8 +128,8 @@ class EM4WP_Post_Mover {
 		}
 
 		// If there were media attached to the sourse post content then copy that over
-		if($attached_images){
-			mpd_process_post_media_attachements($post_id, $attached_images, $attached_images_alt_tags, $source_blog_id, $to);
+		if ( $attached_images ) {
+			$this->process_post_media_attachements( $post_id, $attached_images, $attached_images_alt_tags, $from, $to );
 		}
 
 		// If there was a featured image in the sourse post then copy it over
@@ -181,6 +175,108 @@ class EM4WP_Post_Mover {
 		//////////////////////////////////////
 
 		return $createdPostObject;
+	}
+
+	/**
+	 * This function performs the action of copying the attached media image(s) to the newly created post in
+	 * the core function.
+	 *
+	 * @since 0.5
+	 * @param int $destination_post_id The ID of the post we are copying the media to
+	 * @param array $post_media_attachments An array of media library IDs to copy. Probably generated from mpd_get_images_from_the_content()
+	 * @param array $attached_images_alt_tags An array of alt tags associated with the images in $post_media_attachments array. Mirrors the array order of this for association. Probably generated from mpd_get_image_alt_tags()
+	 * @param int $source_id The ID of the blog these images are being copied from.
+	 * @param int $new_blog_id The ID of the blog these images are going to.
+	 * @return null
+	 */
+	public function process_post_media_attachements( $destination_post_id, $post_media_attachments, $attached_images_alt_tags, $source_id, $new_blog_id ){
+
+		// Variable to return the count of images we have processed and also to patch the source keys with the destination keys
+		$image_count = 0;
+		// Get array of the IDs of the source images pulled from the source content
+		$old_image_ids = array_keys( $post_media_attachments );
+
+		// Do stuff with each image from the source post content
+		foreach ( $post_media_attachments as $post_media_attachment ) {
+
+			// Get all the data inside a file and attach it to a variable
+			$image_data             = file_get_contents( mpd_fix_wordpress_urls( $post_media_attachment->guid ) );
+			// Break up the source URL into targetable sections
+			$image_URL_info         = pathinfo( $post_media_attachment->guid );
+			//Just get the url without the filename extension...we are doing this because this will be the standard URL
+			//for all the thumbnails attached to this image and we can therefore 'find and replace' all the possible
+			//intermediate image sizes later down the line. See: https://codex.wordpress.org/Function_Reference/get_intermediate_image_sizes
+			$image_URL_without_EXT  = $image_URL_info['dirname'] ."/". $image_URL_info['filename'];
+			//Do the find and replace for the site path
+			// ie   http://www.somesite.com/source_blog_path/uploads/10/10/file... will become
+			//      http://www.somesite.com/destination_blog_path/uploads/10/10/file...
+
+			$image_URL_without_EXT  = str_replace( get_blog_details( $new_blog_id )->siteurl, get_blog_details( $source_id )->siteurl, $image_URL_without_EXT );
+
+			$filename               = basename( $post_media_attachment->guid );
+
+			// Get the upload directory for the current site
+			$upload_dir = wp_upload_dir();
+			// Make the path to the desired path to the new file we are about to create
+			if ( wp_mkdir_p( $upload_dir['path'] ) ) {
+				$file = $upload_dir['path'] . '/' . $filename;
+			} else {
+				$file = $upload_dir['basedir'] . '/' . $filename;
+			}
+
+			// Get the URL (not the URI) of the new file
+			$new_file_url = $upload_dir['url'] . '/' . $filename;
+			$new_file_url = str_replace( get_blog_details( $source_id )->siteurl, get_blog_details( $new_blog_id )->siteurl, $new_file_url );
+
+			// Add the file contents to the new path with the new filename
+			file_put_contents( $file, $image_data );
+			// Get the mime type of the new file extension
+			$wp_filetype = wp_check_filetype( $filename, null );
+
+			$attachment = array(
+				'post_mime_type' => 'image/jpeg',
+				'post_title'     => sanitize_file_name( $filename ),
+				'post_content'   => $post_media_attachment->post_content,
+				'post_status'    => 'inherit',
+				'post_excerpt'   => $post_media_attachment->post_excerpt,
+				'post_name'      => $post_media_attachment->post_name,
+				'guid'           => $new_file_url
+			);
+
+			// Attach the new file and its information to the database
+			$attach_id = wp_insert_attachment( $attachment, $file, $destination_post_id );
+
+			// Add alt text to the destination image
+			if ( $attached_images_alt_tags ) {
+				update_post_meta( $attach_id, '_wp_attachment_image_alt', $attached_images_alt_tags[$image_count] );
+			}
+
+			// Include code to process functions below:
+			require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+			// Define attachment metadata
+			$attach_data = wp_generate_attachment_metadata( $attach_id, $file );
+
+			// Assign metadata to attachment
+			wp_update_attachment_metadata( $attach_id, $attach_data );
+
+			// Now that we have all the data for the newly created file and its post we need to manipulate the old content so that
+			// it now reflects the destination post
+			$new_image_URL_without_EXT = mpd_get_image_new_url_without_extension($attach_id, $source_id, $new_blog_id, $new_file_url );
+			$old_content               = get_post_field( 'post_content', $destination_post_id );
+			$middle_content            = str_replace( $image_URL_info['dirname'] . "/" . $image_URL_info['filename'], $new_image_URL_without_EXT, $old_content );
+			$update_content            = str_replace( 'wp-image-' . $old_image_ids[$image_count], 'wp-image-' . $attach_id, $middle_content );
+
+			$post_update = array(
+				'ID'           => $destination_post_id,
+				'post_content' => $update_content
+			);
+
+			wp_update_post( $post_update );
+
+			$image_count++;
+		}
+
 	}
 
 }
