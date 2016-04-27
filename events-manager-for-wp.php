@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Events Calendar for Make Benefit WordPress
+Plugin Name: Events Manager for WordPress
 Plugin URI: https://forsite.media/
-Description: Events Calendar for Make Benefit WordPress - stop-gap name until we come up with something better ;)
+Description: Events Manager for WordPress
 Version: 1.0
 Author: Forsite Media
 Author URI: https://forsite.media/
 License: GPLv2 or later
-Text Domain: XXXXXXXXXXXXX
+Text Domain: events-manager-for-wordpress
 */
 
 /*
@@ -29,10 +29,10 @@ Copyright 2005-2015 Automattic, Inc.
 */
 
 // Define plugin constants
-define( 'RR_EVENTS_CALENDAR_VERSION', '1.1.0' );
-define( 'RR_EVENTS_CALENDAR_DIR', plugin_dir_path( __FILE__ ) );
-define( 'RR_EVENTS_CALENDAR_URL', plugin_dir_url( __FILE__ ) );
-define( 'RR_EVENTS_CALENDAR_PLUGIN_FILE', __FILE__ );
+define( 'EM4WP_EVENTS_CALENDAR_VERSION', '1.1.0' );
+define( 'EM4WP_EVENTS_CALENDAR_DIR', plugin_dir_path( __FILE__ ) );
+define( 'EM4WP_EVENTS_CALENDAR_URL', plugin_dir_url( __FILE__ ) );
+define( 'EM4WP_EVENTS_CALENDAR_PLUGIN_FILE', __FILE__ );
 
 /**
  * Autoload the classes.
@@ -40,10 +40,10 @@ define( 'RR_EVENTS_CALENDAR_PLUGIN_FILE', __FILE__ );
  *
  * @param  string  $class  The class being instantiated
  */
-function autoload_rr( $class ) {
+function autoload_em4wp( $class ) {
 
 	// Bail out if not loading a Media Manager class
-	if ( 'RR_' != substr( $class, 0, 3 ) ) {
+	if ( 'EM4WP_' != substr( $class, 0, 6 ) ) {
 		return;
 	}
 
@@ -59,17 +59,13 @@ function autoload_rr( $class ) {
 	// Include the class (spl_autoload_register will automatically instantiate it for us)
 	require( $path );
 }
-spl_autoload_register( 'autoload_rr' );
+spl_autoload_register( 'autoload_em4wp' );
 
-new RR_BuddyPress;
-new RR_Events_Calendar;
-new RR_Recurring_Events;
-new RR_Event_Schema;
-new RR_Events_Calendar_View;
-new RR_Upcoming_Events;
-new RR_Locations;
-
-
-
-
-add_theme_support( 'be-events-calendar', array( 'event-category', 'recurring-events' ) );
+new EM4WP_BuddyPress;
+new EM4WP_Events_Calendar;
+new EM4WP_Recurring_Events;
+new EM4WP_Genesis_Schema;
+new EM4WP_Events_Calendar_View;
+new EM4WP_Upcoming_Events;
+new EM4WP_Locations;
+new EM4WP_Events_Archive;

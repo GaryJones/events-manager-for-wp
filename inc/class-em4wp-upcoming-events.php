@@ -8,7 +8,7 @@
  * @copyright  Copyright (c) 2014, Bill Erickson
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
-class RR_Upcoming_Events extends WP_Widget {
+class EM4WP_Upcoming_Events extends WP_Widget {
 
 	/**
 	 * Class constructor.
@@ -35,32 +35,39 @@ class RR_Upcoming_Events extends WP_Widget {
 			'posts_per_page' => $count,
 			'order'          => 'ASC',
 			'orderby'        => 'meta_value_num',
-			'meta_key'       => 'rr_event_start',
+			'meta_key'       => 'em4wp_event_start',
 			'meta_query'     => array(
 				array(
-					'key'     => 'rr_event_end',
+					'key'     => 'em4wp_event_end',
 					'value'   => time(),
 					'compare' => '>',
 				)
 			)
 		) );
-		if( $loop->have_posts() ):
+		if ( $loop->have_posts() ):
 
 			echo $before_widget;
-		
-			if( $instance['title'] )
+
+			if ( $instance['title'] ) {
 				echo $before_title . apply_filters( 'widget_title', $instance['title'] ) . $after_title;
-			
+			}
+
 			echo '<ul>';
-			
+
 			while( $loop->have_posts() ): $loop->the_post();
 				global $post;
-				$output = '<span class="meta">' . date( 'l, F j, Y', get_post_meta( get_the_ID(), 'rr_event_start', true ) ) . '</span> <a href="' . get_permalink() . '">' . get_the_title() . '</a>';
-				echo '<li>' . apply_filters( 'rr_events_manager_upcoming_widget_output', $output, $post ) . '</li>'; 
+				$output = '<span class="meta">' . date( get_option( 'date_format' ), get_post_meta( get_the_ID(), 'em4wp_event_start', true ) ) . '</span> <a href="' . get_permalink() . '">' . get_the_title() . '</a>';
+
+				$read_more = apply_filters( 'em4wp_events_manager_upcoming_widget_output', $output, $post );
+				if ( $read_more ) {
+					echo '<li>' . $read_more . '</li>'; 
+				}
+
 			endwhile;
-			
-			if( $instance['more_text'] )
+
+			if ( $instance['more_text'] ) {
 				echo '<li><a href="' . get_post_type_archive_link( 'event' ) . '">' . esc_attr( $instance['more_text'] ) . '</a></li>';
+			}
 			echo '</ul>';
 
 			echo $after_widget;
@@ -93,19 +100,18 @@ class RR_Upcoming_Events extends WP_Widget {
 	 * @param array  An array of the current settings for this widget
 	 **/
 	public function form( $instance ) {
-	
-		$defaults = array( 'title' => 'Upcoming Events', 'count' => 2, 'more_text' => 'View All Event Information' );
+
+		$defaults = array( 'title' => 'Upcoming Events', 'count' => 2, 'more_text' => 'View All Event Information (leave blank for no link)' );
 		$instance = wp_parse_args( (array) $instance, $defaults ); 
-		
+
 		echo '<p><label for="' . $this->get_field_id( 'title' ) . '">Title: <input class="widefat" id="' . $this->get_field_id( 'title' ) .'" name="' . $this->get_field_name( 'title' ) . '" value="' . esc_attr( $instance['title'] ) . '" /></label></p>';
 		echo '<p><label for="' . $this->get_field_id( 'count' ) . '">How Many: <input class="widefat" id="' . $this->get_field_id( 'count' ) .'" name="' . $this->get_field_name( 'count' ) . '" value="' . esc_attr( $instance['count'] ) . '" /></label></p>';
 		echo '<p><label for="' . $this->get_field_id( 'more_text' ) . '">More Text: <input class="widefat" id="' . $this->get_field_id( 'more_text' ) .'" name="' . $this->get_field_name( 'more_text' ) . '" value="' . esc_attr( $instance['more_text'] ) . '" /></label></p>';
-		
-		
+
 	}
 }
 
-function rr_register_upcoming_events_widget() {
-	register_widget('RR_Upcoming_Events');
+function em4wp_register_upcoming_events_widget() {
+	register_widget('EM4WP_Upcoming_Events');
 }
-add_action( 'widgets_init', 'rr_register_upcoming_events_widget' );
+add_action( 'widgets_init', 'em4wp_register_upcoming_events_widget' );

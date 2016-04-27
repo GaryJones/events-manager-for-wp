@@ -9,7 +9,7 @@
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
-class RR_Events_Calendar_View {
+class EM4WP_Events_Calendar_View {
 
 	/**
 	 * Class constructor.
@@ -17,8 +17,8 @@ class RR_Events_Calendar_View {
 	public function __construct() {
 
 		// Setup ajax
-		add_action( 'wp_ajax_rr_events_calendar',        array( $this, 'ajax' ) );
-		add_action( 'wp_ajax_nopriv_rr_events_calendar', array( $this, 'ajax' ) );
+		add_action( 'wp_ajax_em4wp_events_calendar',        array( $this, 'ajax' ) );
+		add_action( 'wp_ajax_nopriv_em4wp_events_calendar', array( $this, 'ajax' ) );
 
 		// Register shortcode
 		add_shortcode( 'events-calendar', array( $this, 'output' ) );
@@ -30,28 +30,28 @@ class RR_Events_Calendar_View {
 	public function output() {
 
 		// Load javascript assets
-		wp_enqueue_script( 'moment',       RR_EVENTS_CALENDAR_URL . 'js/moment.min.js',       array( 'jquery' ),           RR_EVENTS_CALENDAR_VERSION );
-		wp_enqueue_script( 'fullcalendar', RR_EVENTS_CALENDAR_URL . 'js/fullcalendar.min.js', array( 'jquery', 'moment' ), RR_EVENTS_CALENDAR_VERSION );
+		wp_enqueue_script( 'moment',       EM4WP_EVENTS_CALENDAR_URL . 'js/moment.min.js',       array( 'jquery' ),           EM4WP_EVENTS_CALENDAR_VERSION );
+		wp_enqueue_script( 'fullcalendar', EM4WP_EVENTS_CALENDAR_URL . 'js/fullcalendar.min.js', array( 'jquery', 'moment' ), EM4WP_EVENTS_CALENDAR_VERSION );
 		
 		// Setup JS vars
 		$data = array(
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( 'rr_events_calendar' ),
+			'nonce'    => wp_create_nonce( 'em4wp_events_calendar' ),
 		);
-		wp_localize_script( 'fullcalendar', 'rr_events_calendar', $data );
+		wp_localize_script( 'fullcalendar', 'em4wp_events_calendar', $data );
 
 		// Load CSS unless overriden
 		$css = apply_filters( 'r_events_calendar_view_css', true );
 		if ( true === $css ) {
-			wp_enqueue_style( 'fullcalendar', RR_EVENTS_CALENDAR_URL . 'css/fullcalendar.min.css' );
+			wp_enqueue_style( 'fullcalendar', EM4WP_EVENTS_CALENDAR_URL . 'css/fullcalendar.min.css' );
 		}
 		
 		ob_start();
 
-		do_action( 'rr_events_calendar_view_before' );
+		do_action( 'em4wp_events_calendar_view_before' );
 
 		// Placeholder markup for the calendar
-		echo '<div id="rr-event-calendar"></div>';
+		echo '<div id="em4wp-event-calendar"></div>';
 
 		// More info - http://fullcalendar.io/docs/
 		$calendar_args = array(
@@ -61,14 +61,14 @@ class RR_Events_Calendar_View {
 			'aspectRatio'    => '2',
 			'fixedWeekCount' => 'false',
 		);
-		$calendar_args = apply_filters( 'rr_events_calendar_view_js_args', $calendar_args );
+		$calendar_args = apply_filters( 'em4wp_events_calendar_view_js_args', $calendar_args );
 		?>
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
-				$('#rr-event-calendar').fullCalendar({
+				$('#em4wp-event-calendar').fullCalendar({
 					<?php 
 					// Add hook so other args can be easily added if needed
-					do_action( 'rr_events_calendar_view_js' );
+					do_action( 'em4wp_events_calendar_view_js' );
 					?>
 					header: {
 						left: '<?php echo $calendar_args['header_left']; ?>',
@@ -99,12 +99,12 @@ class RR_Events_Calendar_View {
 					},
 					eventSources: [
 						{
-							url: rr_events_calendar.ajax_url,
+							url: em4wp_events_calendar.ajax_url,
 							type: 'POST',
 							cache: true,
 							data: {
-								nonce: rr_events_calendar.nonce,
-								action: 'rr_events_calendar'
+								nonce: em4wp_events_calendar.nonce,
+								action: 'em4wp_events_calendar'
 							},
 							success: function( res ) {
 								// enjoy the shot
@@ -121,7 +121,7 @@ class RR_Events_Calendar_View {
 		</script>
 		<?php
 
-		do_action( 'rr_events_calendar_view_after' );
+		do_action( 'em4wp_events_calendar_view_after' );
 
 		// Let's kick it.
 		$output = ob_get_clean();
@@ -135,7 +135,7 @@ class RR_Events_Calendar_View {
 	 */
 	public function ajax() {
 
-		check_ajax_referer( 'rr_events_calendar', 'nonce' );
+		check_ajax_referer( 'em4wp_events_calendar', 'nonce' );
 
 		$start       = $_POST['start'];
 		$start_unix  = strtotime( $start );
@@ -146,7 +146,7 @@ class RR_Events_Calendar_View {
 			'post_type' => 'event',
 			'meta_query' => array(
 				array(
-					'key'     => 'rr_event_start',
+					'key'     => 'em4wp_event_start',
 					'value'   => array( $start_unix, $end_unix ),
 					'type'    => 'NUMERIC',
 					'compare' => 'BETWEEN',
@@ -155,9 +155,9 @@ class RR_Events_Calendar_View {
 		);									
 		$events = new WP_Query( $events_args ); while( $events->have_posts() ) : $events->the_post();
 			$all_day         = false;
-			$start_timestamp = get_post_meta( get_the_ID(), 'rr_event_start', true );
+			$start_timestamp = get_post_meta( get_the_ID(), 'em4wp_event_start', true );
 			$start_time      = date( 'g:iA', $start_timestamp );
-			$end_timestamp   = get_post_meta( get_the_ID(), 'rr_event_end', true );
+			$end_timestamp   = get_post_meta( get_the_ID(), 'em4wp_event_end', true );
 			$end_time        = date( 'g:iA', $end_timestamp );
 
 			// Determine if the event is "all day". If the editor selects "All Day" checkbox,

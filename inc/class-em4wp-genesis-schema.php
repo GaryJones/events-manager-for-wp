@@ -1,23 +1,25 @@
 <?php
 
 /**
- * Schema for Genesis
+ * Schema for Genesis.
  *
  * @link       https://github.com/billerickson/BE-Events-Calendar
  * @author     Bill Erickson <bill@billerickson.net>
  * @copyright  Copyright (c) 2014, Bill Erickson
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
- 
-class RR_Event_Schema {
+class EM4WP_Genesis_Schema extends EM4WP_Events_Core {
 
 	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
+
+		parent::__construct();
+
 		add_action( 'plugins_loaded', array( $this, 'init' ) );	
 	}
-	
+
 	/**
 	 * Initialize and go.
 	 */
@@ -30,7 +32,7 @@ class RR_Event_Schema {
 		add_filter( 'genesis_post_title_output', array( $this, 'title_link' ), 20 );
 		add_action( 'genesis_entry_header', array( $this, 'event_date' ) );
 	}
-	
+
 	/**
 	 * Empty Schema.
 	 *
@@ -38,17 +40,18 @@ class RR_Event_Schema {
 	 * @return array
 	 */
 	public function empty_schema( $attr ) {
-	
+
 		// Only run on events archive
-		if( !is_post_type_archive( 'event' ) )
+		if( !is_post_type_archive( $this->event_slug ) ) {
 			return $attr;
-			
+		}
+
 		$attr['itemtype'] = '';
 		$attr['itemprop'] = '';
 		$attr['itemscope'] = '';
 		return $attr;	
 	}
-	
+
 	/**
 	 * Event Schema.
 	 *
@@ -58,7 +61,7 @@ class RR_Event_Schema {
 	public function event_schema( $attr ) {
 
 		// Only run on event
-		if( ! 'event' == get_post_type() )
+		if( ! $this->event_slug == get_post_type() )
 			return $attr;
 			
 		$attr['itemtype'] = 'http://schema.org/Event';
@@ -74,11 +77,11 @@ class RR_Event_Schema {
 	 * @return array
 	 */
 	public function event_name_itemprop( $attr ) {
-		if( 'event' == get_post_type() )
+		if ( $this->event_slug == get_post_type() )
 			$attr['itemprop'] = 'name';
 		return $attr;
 	}
-	
+
 	/**
 	 * Event Description Itemprop.
 	 * 
@@ -86,11 +89,11 @@ class RR_Event_Schema {
 	 * @return array
 	 */
 	public function event_description_itemprop( $attr ) {
-		if( 'event' == get_post_type() )
+		if ( $this->event_slug == get_post_type() )
 			$attr['itemprop'] = 'description';
 		return $attr;
 	}
-	
+
 	/**
 	 * Title Link.
 	 * 
@@ -98,28 +101,30 @@ class RR_Event_Schema {
 	 * @return string
 	 */
 	public function title_link( $output ) {
-		if( 'event' == get_post_type() )
+		if ( $this->event_slug == get_post_type() ) {
 			$output = str_replace( 'rel="bookmark"', 'rel="bookmark" itemprop="url"', $output );
+		}
+
 		return $output;
 	}
-	
+
 	/**
 	 * Event Date.
 	 */
 	public function event_date() {
-		if ( 'event' !== get_post_type() ) {
+		if ( $this->event_slug !== get_post_type() ) {
 			return;
 		}
-			
-		$start = get_post_meta( get_the_ID(), 'rr_event_start', true );
+
+		$start = get_post_meta( get_the_ID(), 'em4wp_event_start', true );
 		if ( $start ) {
 			echo '<meta itemprop="startDate" content="' . date('c', $start ).'">';
 		}
-		
-		$end = get_post_meta( get_the_ID(), 'rr_event_end', true );
+
+		$end = get_post_meta( get_the_ID(), 'em4wp_event_end', true );
 		if ( $end ) {
 			echo '<meta itemprop="endDate" content="' . date( 'c', $end ).'">';
 		}
-		
+
 	}
 }

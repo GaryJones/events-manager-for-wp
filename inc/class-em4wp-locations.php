@@ -8,12 +8,15 @@
  * @copyright  Copyright (c) 2014, Bill Erickson
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
-class RR_Locations {
+class EM4WP_Locations extends EM4WP_Events_Core {
 
 	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
+
+		parent::__construct();
+
 		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
 		add_action( 'save_post',      array( $this, 'meta_boxes_save' ), 10, 2 );
 		add_filter( 'the_content',    array( $this, 'the_content' ) );
@@ -25,12 +28,12 @@ class RR_Locations {
 	public function add_metabox() {
 		add_meta_box(
 			'location', // ID
-			__( 'Location', 'rrewc' ), // Title
+			__( 'Location', 'events-manager-for-wp' ), // Title
 			array(
 				$this,
 				'meta_box', // Callback to method to display HTML
 			),
-			'event', // Post type
+			$this->event_slug, // Post type
 			'normal', // Context, choose between 'normal', 'advanced', or 'side'
 			'high'  // Position, choose between 'high', 'core', 'default' or 'low'
 		);
@@ -42,6 +45,11 @@ class RR_Locations {
 	public function meta_box() {
 
 		$location = get_post_meta( get_the_ID(), '_location', true );
+		if ( isset( $location['display'] ) ) {
+			$display = $location['display'];
+		} else {
+			$display = '';
+		}
 		if ( isset( $location['latitude'] ) ) {
 			$latitude = $location['latitude'];
 		} else {
@@ -71,46 +79,52 @@ class RR_Locations {
 
 		?>
 		<style>
-		.rr-location {
+		.em4wp-location {
 			display: inline-block;
 		}
-		table.rr-location {
+		table.em4wp-location {
 			width: 39%;
 		}
-		iframe.rr-location {
+		iframe.em4wp-location {
 			width: 59%;
 			height: 300px;
 		}
 		</style>
 
-		<table class="rr-location">
+		<table class="em4wp-location">
 			<tr>
-				<td><label for="latitude"><strong><?php _e( 'Latitude', 'rrewc' ); ?></strong></label></td>
+				<td><label for="display"><strong><?php _e( 'Display?', 'events-manager-for-wp' ); ?></strong></label></td>
+				<td>
+					<input type="checkbox" name="location[display]" id="display" <?php checked( $display, 1 ); ?> value="1" />
+				</td>
+			</tr>
+			<tr>
+				<td><label for="latitude"><strong><?php _e( 'Latitude', 'events-manager-for-wp' ); ?></strong></label></td>
 				<td>
 					<input type="text" name="location[latitude]" id="latitude" value="<?php echo esc_attr( $latitude ); ?>" />
 				</td>
 			</tr>
 			<tr>
-				<td><label for="longitude"><strong><?php _e( 'Longitude', 'rrewc' ); ?></strong></label></td>
+				<td><label for="longitude"><strong><?php _e( 'Longitude', 'events-manager-for-wp' ); ?></strong></label></td>
 				<td>
 					<input type="text" name="location[longitude]" id="longitude" value="<?php echo esc_attr( $longitude ); ?>" />
 				</td>
 			</tr>
 			<tr>
-				<td><label for="width"><strong><?php _e( 'Width', 'rrewc' ); ?></strong></label></td>
+				<td><label for="width"><strong><?php _e( 'Width', 'events-manager-for-wp' ); ?></strong></label></td>
 				<td>
 					<input type="text" name="location[width]" id="width" value="<?php echo esc_attr( $width ); ?>" />
 				</td>
 			</tr>
 			<tr>
-				<td><label for="height"><strong><?php _e( 'Height', 'rrewc' ); ?></strong></label></td>
+				<td><label for="height"><strong><?php _e( 'Height', 'events-manager-for-wp' ); ?></strong></label></td>
 				<td>
 					<input type="text" name="location[height]" id="height" value="<?php echo esc_attr( $height ); ?>" />
 				</td>
 			</tr>
 		</table>
 
-		<iframe id="rr-map" class="rr-location" src="<?php echo esc_url( $embed_url ); ?>" frameborder="0" allowfullscreen></iframe>
+		<iframe id="em4wp-map" class="em4wp-location" src="<?php echo esc_url( $embed_url ); ?>" frameborder="0" allowfullscreen></iframe>
 
 		<script>
 
@@ -122,7 +136,7 @@ class RR_Locations {
 
 			function set_map_location() {
 				var embed_url = 'https://maps.google.com/maps?q='+latitude.value+','+longitude.value+'&z=14&output=embed&iwloc=0';
-				var map = document.getElementById("rr-map");
+				var map = document.getElementById("em4wp-map");
 				map.src = embed_url;
 			}
 			set_map_location();
@@ -151,15 +165,17 @@ class RR_Locations {
 			// Sanitize and store the data
 			foreach ( $_POST['location'] as $key => $value ) {
 				if (
-					in_array( $key, array( 'longitude', 'latitude', 'width', 'height' ) )
+					in_array( $key, array( 'longitude', 'latitude', 'width', 'height', 'display' ) )
 					&&
 					is_numeric( $value )
 				) {
 					$location[$key] = $value;
 				}
+
 			}
 
 			update_post_meta( $post_id, '_location', $location );
+
 		}
 
 	}
@@ -173,13 +189,13 @@ class RR_Locations {
 	public function the_content( $content ) {
 
 		// Bail out now if we are not on an event
-		if( 'event' != get_post_type() ) {
-			return;
+		if( $this->event_slug != get_post_type() ) {
+			return $content;
 		}
 
 
 		$location = get_post_meta( get_the_ID(), '_location', true );
-		if ( isset( $location['latitude'] ) && isset( $location['longitude'] ) ) {
+		if ( isset( $location['display'] ) && 1 == $location['display'] && isset( $location['latitude'] ) && isset( $location['longitude'] ) ) {
 
 			$latitude = $location['latitude'];
 			$longitude = $location['longitude'];

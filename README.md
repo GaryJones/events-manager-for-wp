@@ -1,2 +1,2 @@
-# events-calendar-for-make-benefit-wordpress
-Events Calendar for Make Benefit WordPress
+# events-manager-for-wp
+Events Manager for WordPress
