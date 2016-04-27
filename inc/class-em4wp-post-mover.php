@@ -76,8 +76,12 @@ class EM4WP_Post_Mover {
 	 */
 	public function duplicate_over_multisite( $from, $to, $post_id, $post_type ) {
 
+		// Switch to the source blog if not already on it
+		if ( get_current_blog_id() != $from ) {
+			switch_to_blog( $from );
+		}
+
 		$post_author = 1; // Should pick up origin post author
-		$post_status = 'publish'; // Should pick up origin post status
 
 		// Collect function arguments into a single variable
 		$mpd_process_info = array(
@@ -87,28 +91,15 @@ class EM4WP_Post_Mover {
 		);
 
 		// Get the object of the post we are copying
-		$post   = get_post( $post_id );
-		// Get the title of the post we are copying
-		$title      = get_the_title( $post );
+		$post = get_post( $post_id );
+
 		// Get the tags from the post we are copying
 		$sourcetags = wp_get_post_tags( $post_id, array( 'fields' => 'names' ) );
 		// Get the ID of the sourse blog
 		$source_blog_id  = get_current_blog_id();
+
 		// Get the categories for the post
 //		$source_categories = mpd_get_objects_of_post_categories( $post_id, $mpd_process_info['post_type']);
-
-		// Using the orgininal post object we now want to insert our any new data based on user settings for use
-		// in the post object that we will be adding to the destination site
-		$post = array(
-			'post_title'    => $title,
-			'post_status'   => $mpd_process_info['requested_post_status'],
-			'post_type'     => $mpd_process_info['post_type'],
-			'post_author'   => $mpd_process_info['post_author'],
-			'post_content'  => $post->post_content,
-			'post_content'  => $post->post_content,
-			'post_excerpt'  => $post->post_excerpt,
-			'post_content_filtered' => $post->post_content_filtered
-		);
 
 		$data              = get_post_custom( $post );
 		$meta_values       = get_post_meta( $post_id );
@@ -138,8 +129,17 @@ class EM4WP_Post_Mover {
 		////////////////////////////////////////////////
 
 		// Make the new post
-		$post_id = wp_insert_post( $post );
+echo 'Post ID: ' .$post_id . "\nFrom: ".$from."\nTo: ".$to."\n";
+$post->post_content_filtered = 'xxx';
 
+		// Make sure we don't try to reuse the same post ID
+		unset( $post->ID );
+
+		$some_id = wp_insert_post( $post );
+echo $some_id;
+echo "\n\n";
+print_r( $post );
+die;
 		// Add the source post meta to the destination post
 		foreach ( $data as $key => $values) {
 
