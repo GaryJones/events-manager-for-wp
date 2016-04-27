@@ -83,9 +83,10 @@ class EM4WP_Post_Mover {
 
 		$post_author = 1; // Should pick up origin post author
 
-		// Get the object of the post we are copying
+		// Get the posts data
 		$post = get_post( $source_id );
 		unset( $post->ID ); // Make sure we don't try to reuse the same post ID
+		$meta_values = get_post_meta( $source_id );
 
 		// Get the tags from the post we are copying
 		$sourcetags = wp_get_post_tags( $source_id, array( 'fields' => 'names' ) );
@@ -115,7 +116,7 @@ class EM4WP_Post_Mover {
 		// Copy the meta data collected from the sourse post to the new post
 		foreach ( $meta_values as $key => $values ) {
 
-			foreach ($values as $value) {
+			foreach ( $values as $value ) {
 				//If the data is serialised we need to unserialise it before adding or WordPress will serialise the serialised data
 				//...which is bad
 				if ( is_serialized( $value ) ) {
