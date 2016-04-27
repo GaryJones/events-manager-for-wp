@@ -46,7 +46,7 @@ return;
 				if ( get_current_blog_id() == $from ) {
 
 					// Copy $post_id between relevant sites within $this->sites.
-					$this->duplicate_over_multisite( $from, $to );
+					$this->duplicate_over_multisite( $from, $to, $this->post_type, 'author??', 'prefix???' );
 					echo 'Saving Event!';
 					die;
 
@@ -65,12 +65,10 @@ return;
 	 * This is the main core function on Multisite Post Duplicator that processes the duplication of a post on a network from one
 	 * site to another
 	 * 
-	 * @param int $post_id_to_copy The ID of the source post to copy
-	 * @param int $new_blog_id The ID of the destination blog to copy to.
+	 * @param int $from The ID of the source post to copy
+	 * @param int $to The ID of the destination blog to copy to.
 	 * @param string $post_type The destination post type.
-	 * @param int $post_author The ID of the requested post author from the destination site.
 	 * @param string $prefix Optional prefix to be used on the destination post.
-	 * @param string $post_status The post status for the destination ID. Has to be one of the values returned from the mpd_get_post_statuses() function
 	 * 
 	 * @return array An array containing information about the newly created post
 	 * 
@@ -81,12 +79,15 @@ return;
 	 *          site_name    => 'Another Site'
 	 * 
 	 */
-	function duplicate_over_multisite( $post_id_to_copy, $new_blog_id, $post_type, $post_author, $prefix, $post_status ) {
+	public function duplicate_over_multisite( $from, $to, $post_type, $prefix ) {
+
+		$post_author = 1; // Should pick up origin post author
+		$post_status = 'publish'; // Should pick up origin post status
 
 		//Collect function arguments into a single variable
 		$mpd_process_info = array(
-			'source_id'             => $post_id_to_copy,
-			'destination_id'        => $new_blog_id,
+			'source_id'             => $from,
+			'destination_id'        => $to,
 			'post_type'             => $post_type,
 			'post_author'           => $post_author,
 			'prefix'                => $prefix,
@@ -104,7 +105,7 @@ return;
 		//Get the ID of the sourse blog
 		$source_blog_id  = get_current_blog_id();
 		//Get the categories for the post
-		$source_categories = mpd_get_objects_of_post_categories($mpd_process_info['source_id'], $mpd_process_info['post_type']);
+//		$source_categories = mpd_get_objects_of_post_categories($mpd_process_info['source_id'], $mpd_process_info['post_type']);
 
 		//Format the prefix into the correct format if the user adds their own whitespace
 		if($mpd_process_info['prefix'] != ''){
@@ -129,13 +130,13 @@ return;
 
 		$data              = get_post_custom( $mdp_post );
 		$meta_values       = get_post_meta( $mpd_process_info['source_id'] );
-		$featured_image    = mpd_get_featured_image_from_source($mpd_process_info['source_id']);
+//		$featured_image    = mpd_get_featured_image_from_source($mpd_process_info['source_id']);
 
 		//If we are copying the sourse post to another site on the network we will collect data about those 
 		//images.
 		if($mpd_process_info['destination_id'] != $source_blog_id){
 
-			$attached_images = mpd_get_images_from_the_content($mpd_process_info['source_id']);
+//			$attached_images = mpd_get_images_from_the_content($mpd_process_info['source_id']);
 
 			if($attached_images){
 
@@ -191,7 +192,7 @@ return;
 			//Check that the users plugin settings actually want this process to happen
 			if(isset($options['mdp_copy_content_images']) || !$options ){
 				
-				mpd_process_post_media_attachements($post_id, $attached_images, $attached_images_alt_tags, $source_blog_id, $new_blog_id);
+				mpd_process_post_media_attachements($post_id, $attached_images, $attached_images_alt_tags, $source_blog_id, $to);
 
 			}
 
@@ -238,25 +239,7 @@ return;
 		restore_current_blog();
 		//////////////////////////////////////
 
-		//Use the collected information about the new post to generate a status notice and a link for the user
-		$notice = mdp_make_admin_notice($site_name, $site_edit_url, $blog_details);
-		//Add this collected notice to the database because the new page needs a method of getting this data
-		//when the page refreshes
-		update_option('mpd_admin_notice', $notice );
-
-		//Lets also create an array to return to function call incase it is required (extensibility)
-		$createdPostObject = apply_filters('mpd_returned_information', array(
-
-			'id'           => $post_id,
-			'edit_url'     => $site_edit_url,
-			'site_name'    => $site_name
-
-		));
-
-		do_action('mpd_end_of_core', $createdPostObject);
-		 
 		return $createdPostObject;
-	 
 	}
 
 }
