@@ -40,20 +40,27 @@ return;
 		}
 
 		// Bail out if not in $this->sites
+		foreach ( $this->sites as $key => $site ) {
 
-		// Copy $post_id between relevant sites within $this->sites.
+			foreach ( $site as $from => $to ) {
+				if ( get_current_blog_id() == $from ) {
 
-echo 'Saving Event!';die;
+					// Copy $post_id between relevant sites within $this->sites.
+					$this->duplicate_over_multisite( $from, $to );
+					echo 'Saving Event!';
+					die;
+
+				}
+			}
+
+		}
+
 	}
 
 	/**
-	 * 
-	 * This file contains the main function that processes any requested duplication
+	 * Contains the main function that processes any requested duplication
 	 * @since 0.1
 	 * @author Mario Jaconelli <mariojaconelli@gmail.com>
-	 */
-
-	/**
 	 *
 	 * This is the main core function on Multisite Post Duplicator that processes the duplication of a post on a network from one
 	 * site to another
@@ -74,21 +81,17 @@ echo 'Saving Event!';die;
 	 *          site_name    => 'Another Site'
 	 * 
 	 */
-	function mpd_duplicate_over_multisite($post_id_to_copy, $new_blog_id, $post_type, $post_author, $prefix, $post_status) {
+	function duplicate_over_multisite( $post_id_to_copy, $new_blog_id, $post_type, $post_author, $prefix, $post_status ) {
 
 		//Collect function arguments into a single variable
-		$mpd_process_info = apply_filters('mpd_source_data', array(
-
+		$mpd_process_info = array(
 			'source_id'             => $post_id_to_copy,
 			'destination_id'        => $new_blog_id,
 			'post_type'             => $post_type,
 			'post_author'           => $post_author,
 			'prefix'                => $prefix,
 			'requested_post_status' => $post_status
-
-		));
-
-		do_action('mpd_before_core', $mpd_process_info);
+		);
 
 		//Get plugin options
 		$options    = get_option( 'mdp_settings' );
@@ -112,7 +115,7 @@ echo 'Saving Event!';die;
 
 		//Using the orgininal post object we now want to insert our any new data based on user settings for use
 		//in the post object that we will be adding to the destination site
-		$mdp_post = apply_filters('mpd_setup_destination_data', array(
+		$mdp_post = array(
 
 				'post_title'    => $mpd_process_info['prefix'] . $title,
 				'post_status'   => $mpd_process_info['requested_post_status'],
@@ -122,13 +125,10 @@ echo 'Saving Event!';die;
 				'post_excerpt'  => $mdp_post->post_excerpt,
 				'post_content_filtered' => $mdp_post->post_content_filtered
 
-		), $mpd_process_info);
+		);
 
-		//Get all the custom fields associated with the sourse post
-		$data              = apply_filters('mpd_filter_post_custom', get_post_custom($mdp_post)) ;
-		//Get all the meta data associated with the sourse post
-		$meta_values       = apply_filters('mpd_filter_post_meta', get_post_meta($mpd_process_info['source_id'])) ;
-		//Get array of data associated with the featured image for this post
+		$data              = get_post_custom( $mdp_post );
+		$meta_values       = get_post_meta( $mpd_process_info['source_id'] );
 		$featured_image    = mpd_get_featured_image_from_source($mpd_process_info['source_id']);
 
 		//If we are copying the sourse post to another site on the network we will collect data about those 
@@ -149,17 +149,10 @@ echo 'Saving Event!';die;
 
 		}
 
-		//Hook for actions just before we switch to the destination blog to start processing our collected data
-		do_action('mpd_during_core_in_source', $mdp_post, $attached_images);
-		
-
-
 		////////////////////////////////////////////////
 		//Tell WordPress to work in the destination site
 		switch_to_blog($mpd_process_info['destination_id']);
 		////////////////////////////////////////////////
-
-
 
 		//Make the new post
 		$post_id = wp_insert_post($mdp_post);
