@@ -1,12 +1,7 @@
 <?php
 
 /**
- * Upcoming Events Widget
- *
- * @link       https://github.com/billerickson/BE-Events-Calendar
- * @author     Bill Erickson <bill@billerickson.net>
- * @copyright  Copyright (c) 2014, Bill Erickson
- * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License
+ * Upcoming Events Widget.
  */
 class EM4WP_Upcoming_Events extends WP_Widget {
 

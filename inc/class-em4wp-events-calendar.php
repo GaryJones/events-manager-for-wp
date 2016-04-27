@@ -1,12 +1,7 @@
 <?php
 
 /**
- * Event Calendar Base
- *
- * @link       https://github.com/billerickson/BE-Events-Calendar
- * @author     Bill Erickson <bill@billerickson.net>
- * @copyright  Copyright (c) 2014, Bill Erickson
- * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License
+ * Event Calendar Base.
  */
 class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 
