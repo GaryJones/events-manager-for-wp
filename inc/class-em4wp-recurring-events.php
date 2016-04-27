@@ -8,7 +8,7 @@
  * @copyright  Copyright (c) 2014, Bill Erickson
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
- class RR_Recurring_Events {
+ class EM4WP_Recurring_Events {
 
 	/**
 	 * Class constructor.
@@ -38,7 +38,7 @@
 		add_action( 'gettext',  array( $this, 'title_placeholder' ) );
 
 		// Create Metabox
-		$metabox = apply_filters( 'rr_events_manager_metabox_override', false );
+		$metabox = apply_filters( 'em4wp_events_manager_metabox_override', false );
 		if ( false === $metabox ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'metabox_styles' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'metabox_scripts' ) );
@@ -57,7 +57,7 @@
 	public function post_type() {
 
 		// Only run if recurring event support has been added
-		$supports = get_theme_support( 'rr-events-calendar' );
+		$supports = get_theme_support( 'em4wp-events-calendar' );
 		if ( !is_array( $supports ) || !in_array( 'recurring-events', $supports[0] ) )
 			return;
 	
@@ -104,7 +104,7 @@
 	 */
 	public function edit_event_columns( $columns ) {
 		
-		$supports = get_theme_support( 'rr-events-calendar' );
+		$supports = get_theme_support( 'em4wp-events-calendar' );
 		if( !is_array( $supports ) || !in_array( 'recurring-events', $supports[0] ) )
 			return $columns;
 	
@@ -127,7 +127,7 @@
 	public function manage_event_columns( $column, $post_id ) {
 		
 		if ( 'recurring' == $column ) {
-			$parent = get_post_meta( get_the_ID(), 'rr_recurring_event', true );
+			$parent = get_post_meta( get_the_ID(), 'em4wp_recurring_event', true );
 			if ( !empty( $parent ) )
 				echo '<a href="' . get_edit_post_link( $parent ) . '">' . get_the_title( $parent ) . '</a>';		
 		}
@@ -170,7 +170,7 @@
 				$vars = array_merge(
 					$vars,
 					array(
-						'meta_key' => 'rr_recurring_event',
+						'meta_key' => 'em4wp_recurring_event',
 						'orderby' => 'meta_value_num'
 					)
 				);
@@ -210,8 +210,8 @@
 		}
 
 		// Load styles
-		wp_register_style( 'rr-events-calendar', RR_EVENTS_CALENDAR_URL . 'css/events-admin.css', array(), RR_EVENTS_CALENDAR_VERSION );
-		wp_enqueue_style( 'rr-events-calendar' );
+		wp_register_style( 'em4wp-events-calendar', EM4WP_EVENTS_CALENDAR_URL . 'css/events-admin.css', array(), EM4WP_EVENTS_CALENDAR_VERSION );
+		wp_enqueue_style( 'em4wp-events-calendar' );
 	}
 
 	/**
@@ -228,15 +228,15 @@
 		}
 
 		// Load scripts.
-		wp_register_script( 'rr-events-calendar', RR_EVENTS_CALENDAR_URL . 'js/events-admin.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker' ) , RR_EVENTS_CALENDAR_VERSION, true );
-		wp_enqueue_script( 'rr-events-calendar' );
+		wp_register_script( 'em4wp-events-calendar', EM4WP_EVENTS_CALENDAR_URL . 'js/events-admin.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker' ) , EM4WP_EVENTS_CALENDAR_VERSION, true );
+		wp_enqueue_script( 'em4wp-events-calendar' );
 	}
 
 	/**
 	 * Initialize the metabox.
 	 */
 	public function metabox_register() {
-		add_meta_box( 'rr-events-calendar-date-time', 'Date and Time Details', array( $this, 'render_metabox' ), 'recurring-events', 'normal', 'high' );
+		add_meta_box( 'em4wp-events-calendar-date-time', 'Date and Time Details', array( $this, 'render_metabox' ), 'recurring-events', 'normal', 'high' );
 	}
 
 	/**
@@ -244,11 +244,11 @@
 	 */
 	public function render_metabox() {
 
-		$start         = get_post_meta( get_the_ID() , 'rr_event_start',       true );
-		$end           = get_post_meta( get_the_ID() , 'rr_event_end',         true );
-		$recurring     = get_post_meta( get_the_ID() , 'rr_recurring_period',  true );
-		$recurring_end = get_post_meta( get_the_ID() , 'rr_recurring_end',     true );
-		$regenerate    = get_post_meta( get_the_ID() , 'rr_regenerate_events', true );
+		$start         = get_post_meta( get_the_ID() , 'em4wp_event_start',       true );
+		$end           = get_post_meta( get_the_ID() , 'em4wp_event_end',         true );
+		$recurring     = get_post_meta( get_the_ID() , 'em4wp_recurring_period',  true );
+		$recurring_end = get_post_meta( get_the_ID() , 'em4wp_recurring_end',     true );
+		$regenerate    = get_post_meta( get_the_ID() , 'em4wp_regenerate_events', true );
 
 		if ( !empty( $start ) && !empty( $end ) ) {
 			$start_date = date( 'm/d/Y', $start );
@@ -260,21 +260,21 @@
 			$recurring_end = date( 'm/d/Y', $recurring_end );
 		}
 
-		wp_nonce_field( 'rr_events_calendar_date_time', 'rr_events_calendar_date_time_nonce' );
+		wp_nonce_field( 'em4wp_events_calendar_date_time', 'em4wp_events_calendar_date_time_nonce' );
 		?>
 		<div class="section">
 			<p class="title">First Event</p>
 			<p class="subtitle">Serves as a base for all events</p>
 		</div>
 		<div class="section">
-			<label for="rr-events-calendar-start">Start date and time:</label> 
-			<input name="rr-events-calendar-start" type="text"  id="rr-events-calendar-start" class="rr-events-calendar-date" value="<?php echo !empty( $start ) ? $start_date : ''; ?>" placeholder="Date">
-			<input name="rr-events-calendar-start-time" type="text"  id="rr-events-calendar-start-time" class="rr-events-calendar-time" value="<?php echo !empty( $start ) ? $start_time : ''; ?>" placeholder="Time">
+			<label for="em4wp-events-calendar-start">Start date and time:</label> 
+			<input name="em4wp-events-calendar-start" type="text"  id="em4wp-events-calendar-start" class="em4wp-events-calendar-date" value="<?php echo !empty( $start ) ? $start_date : ''; ?>" placeholder="Date">
+			<input name="em4wp-events-calendar-start-time" type="text"  id="em4wp-events-calendar-start-time" class="em4wp-events-calendar-time" value="<?php echo !empty( $start ) ? $start_time : ''; ?>" placeholder="Time">
 		</div>
 		<div class="section">
-			<label for="rr-events-calendar-end">End date and time:</label> 
-			<input name="rr-events-calendar-end" type="text"  id="rr-events-calendar-end" class="rr-events-calendar-date" value="<?php echo !empty( $end ) ? $end_date : ''; ?>" placeholder="Date">
-			<input name="rr-events-calendar-end-time" type="text"  id="rr-events-calendar-end-time" class="rr-events-calendar-time" value="<?php echo !empty( $end ) ? $end_time : ''; ?>" placeholder="Time">
+			<label for="em4wp-events-calendar-end">End date and time:</label> 
+			<input name="em4wp-events-calendar-end" type="text"  id="em4wp-events-calendar-end" class="em4wp-events-calendar-date" value="<?php echo !empty( $end ) ? $end_date : ''; ?>" placeholder="Date">
+			<input name="em4wp-events-calendar-end-time" type="text"  id="em4wp-events-calendar-end-time" class="em4wp-events-calendar-time" value="<?php echo !empty( $end ) ? $end_time : ''; ?>" placeholder="Time">
 		</div>
 		<p class="desc">Date format should be <strong>MM/DD/YYYY</strong>. Time format should be <strong>H:MM am/pm</strong>.<br>Example: 05/12/2015 6:00pm</p>
 		<hr>
@@ -282,20 +282,20 @@
 			<p class="title">Recurring Options</p>
 		</div>
 		<div class="section">
-			<label for="rr-events-calendar-repeat">Repeat period:</label> 
-			<select name="rr-events-calendar-repeat" id="rr-events-calendar-repeat">
+			<label for="em4wp-events-calendar-repeat">Repeat period:</label> 
+			<select name="em4wp-events-calendar-repeat" id="em4wp-events-calendar-repeat">
 				<option value="daily" <?php selected( 'daily', $recurring ); ?>>Daily</option>
 				<option value="weekly" <?php selected( 'weekly', $recurring ); ?>>Weekly</option>
 				<option value="monthly" <?php selected( 'montly', $recurring ); ?>>Monthly</option>
 			</select>
 		</div>
 		<div class="section">
-			<label for="rr-events-calendar-repeat-end">Repeat ends:</label> 
-			<input name="rr-events-calendar-repeat-end" type="text"  id="rr-events-calendar-repeat-end" class="rr-events-calendar-date" value="<?php echo !empty( $recurring_end ) ? $recurring_end : ''; ?>" placeholder="Date">
+			<label for="em4wp-events-calendar-repeat-end">Repeat ends:</label> 
+			<input name="em4wp-events-calendar-repeat-end" type="text"  id="em4wp-events-calendar-repeat-end" class="em4wp-events-calendar-date" value="<?php echo !empty( $recurring_end ) ? $recurring_end : ''; ?>" placeholder="Date">
 		</div>
 		<div class="section">
-			<label for="rr-events-calendar-regenerate">Repeat events:</label> 
-			<input type="checkbox" name="rr-events-calendar-regenerate" id="rr-events-calendar-regenerate" value="1" <?php checked( '1', $regenerate ); ?>>
+			<label for="em4wp-events-calendar-regenerate">Repeat events:</label> 
+			<input type="checkbox" name="em4wp-events-calendar-regenerate" id="em4wp-events-calendar-regenerate" value="1" <?php checked( '1', $regenerate ); ?>>
 			<span class="check-desc"><strong>This will delete all scheduled events!</strong> Past events will be unchanged.</span>
 		</div>
 		<?php
@@ -310,7 +310,7 @@
 	public function metabox_save( $post_id, $post ) {
 		
 		// Security check
-		if ( ! isset( $_POST['rr_events_calendar_date_time_nonce'] ) || ! wp_verify_nonce( $_POST['rr_events_calendar_date_time_nonce'], 'rr_events_calendar_date_time' ) ) {
+		if ( ! isset( $_POST['em4wp_events_calendar_date_time_nonce'] ) || ! wp_verify_nonce( $_POST['em4wp_events_calendar_date_time_nonce'], 'em4wp_events_calendar_date_time' ) ) {
 			return;
 		}
 
@@ -337,25 +337,25 @@
 		}
 
 		// Make sure the event start/end dates were not left blank before we run the save
-		if ( isset( $_POST['rr-events-calendar-start'] ) 
-			&& isset( $_POST['rr-events-calendar-end'] ) 
-			&& isset( $_POST['rr-events-calendar-repeat-end'] ) 
-			&& !empty( $_POST['rr-events-calendar-start'] ) 
-			&& !empty( $_POST['rr-events-calendar-end'] ) 
-			&& !empty( $_POST['rr-events-calendar-repeat-end'] ) )
+		if ( isset( $_POST['em4wp-events-calendar-start'] ) 
+			&& isset( $_POST['em4wp-events-calendar-end'] ) 
+			&& isset( $_POST['em4wp-events-calendar-repeat-end'] ) 
+			&& !empty( $_POST['em4wp-events-calendar-start'] ) 
+			&& !empty( $_POST['em4wp-events-calendar-end'] ) 
+			&& !empty( $_POST['em4wp-events-calendar-repeat-end'] ) )
 		{
-			$start      = $_POST['rr-events-calendar-start'] . ' ' . $_POST['rr-events-calendar-start-time'];
+			$start      = $_POST['em4wp-events-calendar-start'] . ' ' . $_POST['em4wp-events-calendar-start-time'];
 			$start_unix = strtotime( $start );
-			$end        = $_POST['rr-events-calendar-end'] . ' ' . $_POST['rr-events-calendar-end-time'];
+			$end        = $_POST['em4wp-events-calendar-end'] . ' ' . $_POST['em4wp-events-calendar-end-time'];
 			$end_unix   = strtotime( $end );
 
-			update_post_meta( $post_id, 'rr_event_start', $start_unix );
-			update_post_meta( $post_id, 'rr_event_end',   $end_unix   );
-			update_post_meta( $post_id, 'rr_recurring_period', $_POST['rr-events-calendar-repeat'] );
-			update_post_meta( $post_id, 'rr_recurring_end',  strtotime( $_POST['rr-events-calendar-repeat-end'] )  );
+			update_post_meta( $post_id, 'em4wp_event_start', $start_unix );
+			update_post_meta( $post_id, 'em4wp_event_end',   $end_unix   );
+			update_post_meta( $post_id, 'em4wp_recurring_period', $_POST['em4wp-events-calendar-repeat'] );
+			update_post_meta( $post_id, 'em4wp_recurring_end',  strtotime( $_POST['em4wp-events-calendar-repeat-end'] )  );
 
-			if ( isset( $_POST['rr-events-calendar-regenerate'] ) ) {
-				update_post_meta( $post_id, 'rr_regenerate_events', '1' );
+			if ( isset( $_POST['em4wp-events-calendar-regenerate'] ) ) {
+				update_post_meta( $post_id, 'em4wp_regenerate_events', '1' );
 			}
 		}
 	}
@@ -377,22 +377,22 @@
 		}
 			
 		// Only generate once
-		$generated = get_post_meta( $post_id, 'rr_generated_events', true );
+		$generated = get_post_meta( $post_id, 'em4wp_generated_events', true );
 		if( $generated ) {
 			return;
 		}
 			
 		$event_title = get_post( $post_id )->post_title;
 		$event_content = get_post( $post_id )->post_content;
-		$event_start = get_post_meta( $post_id, 'rr_event_start', true );
-		$event_end = get_post_meta( $post_id, 'rr_event_end', true );
+		$event_start = get_post_meta( $post_id, 'em4wp_event_start', true );
+		$event_end = get_post_meta( $post_id, 'em4wp_event_end', true );
 		
 		$first = false;
-		$stop = get_post_meta( $post_id, 'rr_recurring_end', true );
+		$stop = get_post_meta( $post_id, 'em4wp_recurring_end', true );
 		if( empty( $stop ) && !empty( $event_start ) ) {
 			$stop = strtotime( '+1 Years', $event_start );
 		}
-		$period = get_post_meta( $post_id, 'rr_recurring_period', true );
+		$period = get_post_meta( $post_id, 'em4wp_recurring_period', true );
 		while( $event_start < $stop ) {
 		
 			// For regenerating, only create future events
@@ -407,12 +407,12 @@
 				);
 				$event_id = wp_insert_post( $args );
 				if( $event_id ) {
-					update_post_meta( $event_id, 'rr_recurring_event', $post_id );
-					update_post_meta( $event_id, 'rr_event_start', $event_start );
-					update_post_meta( $event_id, 'rr_event_end', $event_end );
+					update_post_meta( $event_id, 'em4wp_recurring_event', $post_id );
+					update_post_meta( $event_id, 'em4wp_event_start', $event_start );
+					update_post_meta( $event_id, 'em4wp_event_end', $event_end );
 
 					// Add any additional metadata
-					$metas = apply_filters( 'rr_events_manager_recurring_meta', array() );
+					$metas = apply_filters( 'rem4wp_events_manager_recurring_meta', array() );
 					if( !empty( $metas ) ) {
 						foreach( $metas as $meta ) {
 							update_post_meta( $event_id, $meta, get_post_meta( $post_id, $meta, true ) );
@@ -420,7 +420,7 @@
 					}
 					
 					// Event Category
-					$supports = get_theme_support( 'rr-events-calendar' );
+					$supports = get_theme_support( 'em4wp-events-calendar' );
 					if( is_array( $supports ) && in_array( 'event-category', $supports[0] ) ) {
 						$terms = get_the_terms( $post_id, 'event-category' );
 						if( !empty( $terms ) && !is_wp_error( $terms ) ) {
@@ -454,7 +454,7 @@
 		}
 		
 		// Dont generate again
-		update_post_meta( $post_id, 'rr_generated_events', true );
+		update_post_meta( $post_id, 'em4wp_generated_events', true );
 	}
 	
 	/**
@@ -468,7 +468,7 @@
 		}
 			
 		// Make sure they want to regenerate them
-		$regenerate = get_post_meta( $post_id, 'rr_regenerate_events', true );
+		$regenerate = get_post_meta( $post_id, 'em4wp_regenerate_events', true );
 		if( ! $regenerate )	{
 			return;
 		}
@@ -479,12 +479,12 @@
 			'posts_per_page' => -1,
 			'meta_query' => array(
 				array(
-					'key' => 'rr_event_start',
+					'key' => 'em4wp_event_start',
 					'value' => time(),
 					'compare' => '>'
 				),
 				array(
-					'key' => 'rr_recurring_event',
+					'key' => 'em4wp_recurring_event',
 					'value' => $post_id,
 				)
 			)
@@ -495,8 +495,8 @@
 		endwhile; endif; wp_reset_postdata();
 		
 		// Turn off regenerate and on generate
-		delete_post_meta( $post_id, 'rr_regenerate_events' );
-		delete_post_meta( $post_id, 'rr_generated_events' );
+		delete_post_meta( $post_id, 'em4wp_regenerate_events' );
+		delete_post_meta( $post_id, 'em4wp_generated_events' );
 		
 		// Generate new events
 		$this->generate_events( $post_id, true );

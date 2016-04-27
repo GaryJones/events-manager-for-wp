@@ -1,18 +1,34 @@
 <?php
 
-class RR_BuddyPress {
+class EM4WP_BuddyPress extends EM4WP_Events_Core {
 
 	const META_KEY  = 'group';
-	const POST_TYPE = 'event';
 
 	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
-		add_action( 'bp_init',                           array( $this, 'post_type_activities_in_group' ) );
+
+		parent::__construct();
+
+		add_action( 'bp_init', array( $this, 'init' ) );
+	}
+
+	/**
+	 * Initialisation of functions.
+	 **/
+	public function init() {
+
+		// Bail out now if BuddyPress Groups component (aka user discussions) not loaded
+		if ( ! class_exists( 'BP_Groups_Group' ) ) {
+			return;
+		}
+
 		add_filter( 'bp_before_activity_add_parse_args', array( $this, 'activity_add' ), 10, 1 );
 		add_action( 'add_meta_boxes',                    array( $this, 'add_metabox' ) );
 		add_action( 'save_post',                         array( $this, 'meta_boxes_save' ), 10, 2 );
+
+		$this->post_type_activities_in_group();
 	}
 
 	/**
@@ -24,7 +40,7 @@ class RR_BuddyPress {
 			return;
 		}
 
-		add_post_type_support( self::POST_TYPE, 'buddypress-activity' );
+		add_post_type_support( $this->event_slug, 'buddypress-activity' );
 
 	}
 
@@ -36,7 +52,7 @@ class RR_BuddyPress {
 	 */
 	public function activity_add( $args = array() ) {
 
-		if ( empty( $args['type'] ) || 'new_' . self::POST_TYPE !== $args['type'] ) {
+		if ( empty( $args['type'] ) || 'new_' . $event_slug !== $args['type'] ) {
 			return $args;
 		}
 
@@ -57,12 +73,12 @@ class RR_BuddyPress {
 	public function add_metabox() {
 		add_meta_box(
 			self::META_KEY, // ID
-			__( 'BuddyPress group', 'rrewc' ), // Title
+			__( 'BuddyPress group', 'events-manager-for-wp' ), // Title
 			array(
 				$this,
 				'meta_box', // Callback to method to display HTML
 			),
-			self::POST_TYPE, // Post type
+			$this->event_slug, // Post type
 			'side', // Context, choose between 'normal', 'advanced', or 'side'
 			'high'  // Position, choose between 'high', 'core', 'default' or 'low'
 		);
@@ -75,7 +91,7 @@ class RR_BuddyPress {
 		?>
 
 		<p>
-			<label for="<?php echo esc_attr( '_' . self::META_KEY ); ?>"><strong><?php _e( 'Select a group activity stream to add the event to.', 'rrewc' ); ?></strong></label>
+			<label for="<?php echo esc_attr( '_' . self::META_KEY ); ?>"><strong><?php _e( 'Select a group activity stream to add the event to.', 'events-manager-for-wp' ); ?></strong></label>
 			<br />
 			<select name="<?php echo esc_attr( '_' . self::META_KEY ); ?>" id="<?php echo esc_attr( '_' . self::META_KEY ); ?>"><?php
 
@@ -83,7 +99,7 @@ class RR_BuddyPress {
 				'type'     =>'alphabetical',
 				'per_page' =>999
 			));
-			echo '<option value="">' . esc_html__( 'None', 'rrewc' ) . '</option>';
+			echo '<option value="">' . esc_html__( 'None', 'events-manager-for-wp' ) . '</option>';
 			foreach ( $groups['groups'] as $key => $group ) {
 				echo '<option ' . selected( $group->id, get_post_meta( get_the_ID(), '_' . self::META_KEY, true ), false ) . ' value="' . esc_attr( $group->id ) . '">' . esc_html( $group->name ) . '</option>';
 			}

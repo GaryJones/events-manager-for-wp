@@ -1,45 +1,45 @@
 /* Date/time metabox
 ----------------------------------*/
-#rr-events-calendar-date-time .section {
+#em4wp-events-calendar-date-time .section {
 	overflow: auto;
 	padding: 5px 0;
 	min-height: 30px;
 }
 
-#rr-events-calendar-date-time .section label {
+#em4wp-events-calendar-date-time .section label {
 	display: inline-block;
 	width: 130px;
 	vertical-align: baseline;
 }
 
-#rr-events-calendar-date-time .ja-event-date,
-#rr-events-calendar-time .ja-event-time {
+#em4wp-events-calendar-date-time .ja-event-date,
+#em4wp-events-calendar-time .ja-event-time {
 	width: 100px;
 }
 
-#rr-events-calendar-date-time .desc {
+#em4wp-events-calendar-date-time .desc {
 	font-size: 12px;
 	color: #666;
 	margin: 0;
 	padding: 5px 0;
 }
 
-#rr-events-calendar-date-time input[type=text] {
+#em4wp-events-calendar-date-time input[type=text] {
 	width: 120px;
 }
 
-#rr-events-calendar-date-time hr {
+#em4wp-events-calendar-date-time hr {
 	border: none;
 	border-top: 1px solid #eee;
 	margin: 10px 0;
 }
 
-#rr-events-calendar-date-time .title {
+#em4wp-events-calendar-date-time .title {
 	margin: 0;
 	font-size: 22px;
 }
 
-#rr-events-calendar-date-time .subtitle {
+#em4wp-events-calendar-date-time .subtitle {
 	color: #aaa;
 	margin: 0;
 	font-size: 13px;
