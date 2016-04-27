@@ -61,7 +61,6 @@ function autoload_em4wp( $class ) {
 }
 spl_autoload_register( 'autoload_em4wp' );
 
-new EM4WP_BuddyPress;
 new EM4WP_Events_Calendar;
 new EM4WP_Recurring_Events;
 new EM4WP_Genesis_Schema;
