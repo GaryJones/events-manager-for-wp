@@ -62,7 +62,7 @@ class EM4WP_Post_Mover {
 	 * 
 	 * @param int $from The ID of the source blog to copy from.
 	 * @param int $to The ID of the destination blog to copy to.
-	 * @param int $post_id The ID of the source post to copy.
+	 * @param int $source_id The ID of the source post to copy.
 	 * @param string $post_type The destination post type.
 	 * 
 	 * @return array An array containing information about the newly created post
@@ -74,7 +74,7 @@ class EM4WP_Post_Mover {
 	 *          site_name    => 'Another Site'
 	 * 
 	 */
-	public function duplicate_over_multisite( $from, $to, $post_id, $post_type ) {
+	public function duplicate_over_multisite( $from, $to, $source_id, $post_type ) {
 
 		// Switch to the source blog if not already on it
 		if ( get_current_blog_id() != $from ) {
@@ -83,44 +83,31 @@ class EM4WP_Post_Mover {
 
 		$post_author = 1; // Should pick up origin post author
 
-		// Collect function arguments into a single variable
-		$mpd_process_info = array(
-			'post_type'             => $post_type,
-			'post_author'           => $post_author,
-			'requested_post_status' => $post_status
-		);
-
 		// Get the object of the post we are copying
-		$post = get_post( $post_id );
+		$post = get_post( $source_id );
+		unset( $post->ID ); // Make sure we don't try to reuse the same post ID
 
 		// Get the tags from the post we are copying
-		$sourcetags = wp_get_post_tags( $post_id, array( 'fields' => 'names' ) );
-		// Get the ID of the sourse blog
+		$sourcetags = wp_get_post_tags( $source_id, array( 'fields' => 'names' ) );
 		$source_blog_id  = get_current_blog_id();
 
 		// Get the categories for the post
-//		$source_categories = mpd_get_objects_of_post_categories( $post_id, $mpd_process_info['post_type']);
+//		$source_categories = mpd_get_objects_of_post_categories( $source_id, $mpd_process_info['post_type']);
 
-		$data              = get_post_custom( $post );
-		$meta_values       = get_post_meta( $post_id );
-//		$featured_image    = mpd_get_featured_image_from_source( $post_id );
+//		$featured_image    = mpd_get_featured_image_from_source( $source_id );
 
 		// If we are copying the sourse post to another site on the network we will collect data about those 
 		// images.
-		if( $to != $source_blog_id){
+		if ( $to != $source_blog_id ) {
 
-//			$attached_images = mpd_get_images_from_the_content( $post_id );
+//			$attached_images = mpd_get_images_from_the_content( $source_id );
 
 			if($attached_images){
-
 //				$attached_images_alt_tags   = mpd_get_image_alt_tags($attached_images);
-				
 			}
 
-		}else{
-			
+		} else{
 			$attached_images = false;
-
 		}
 
 		////////////////////////////////////////////////
@@ -129,44 +116,19 @@ class EM4WP_Post_Mover {
 		////////////////////////////////////////////////
 
 		// Make the new post
-echo 'Post ID: ' .$post_id . "\nFrom: ".$from."\nTo: ".$to."\n";
-$post->post_content_filtered = 'xxx';
+		$post_id = wp_insert_post( $post );
 
-		// Make sure we don't try to reuse the same post ID
-		unset( $post->ID );
-
-		$some_id = wp_insert_post( $post );
-echo $some_id;
-echo "\n\n";
-print_r( $post );
-die;
-		// Add the source post meta to the destination post
-		foreach ( $data as $key => $values) {
-
-		   foreach ($values as $value) {
-
-			   add_post_meta( $post_id, $key, $value );
-
-			}
-
-		}
-		
 		// Copy the meta data collected from the sourse post to the new post
-		foreach ($meta_values as $key => $values) {
+		foreach ( $meta_values as $key => $values ) {
 
-		   foreach ($values as $value) {
+			foreach ($values as $value) {
 				//If the data is serialised we need to unserialise it before adding or WordPress will serialise the serialised data
 				//...which is bad
-				if(is_serialized($value)){
-				 
-					add_post_meta( $post_id, $key, unserialize($value));
-
-				}else{
-
+				if ( is_serialized( $value ) ) {
+					add_post_meta( $post_id, $key, unserialize( $value ) );
+				} else {
 					add_post_meta( $post_id, $key, $value );
-
 				}
-			   
 			}
 
 		}
