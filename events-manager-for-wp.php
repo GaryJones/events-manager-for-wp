@@ -11,6 +11,10 @@ Text Domain: events-manager-for-wordpress
 */
 
 /*
+
+Plugins code is based on BE Events Calendar (c) 2014, Bill Erickson <bill@billerickson.net>.
+https://github.com/billerickson/BE-Events-Calendar
+
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2

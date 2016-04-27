@@ -2,11 +2,6 @@
 
 /**
  * Locations.
- *
- * @link       https://github.com/billerickson/BE-Events-Calendar
- * @author     Bill Erickson <bill@billerickson.net>
- * @copyright  Copyright (c) 2014, Bill Erickson
- * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 class EM4WP_Locations extends EM4WP_Events_Core {
 

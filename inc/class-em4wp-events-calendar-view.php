@@ -2,11 +2,6 @@
 
 /**
  * Calendar view.
- *
- * @link       https://github.com/billerickson/BE-Events-Calendar
- * @author     Bill Erickson <bill@billerickson.net>
- * @copyright  Copyright (c) 2015, Bill Erickson
- * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
 class EM4WP_Events_Calendar_View {
