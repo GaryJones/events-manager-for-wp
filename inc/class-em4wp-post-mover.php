@@ -85,8 +85,6 @@ class EM4WP_Post_Mover {
 			switch_to_blog( $from );
 		}
 
-		$post_author = 1; // Should pick up origin post author
-
 		// Get the posts data
 		$post = get_post( $source_id );
 		unset( $post->ID ); // Make sure we don't try to reuse the same post ID
