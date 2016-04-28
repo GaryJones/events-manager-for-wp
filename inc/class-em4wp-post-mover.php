@@ -93,6 +93,35 @@ class EM4WP_Post_Mover {
 		$post = get_post( $source_id );
 		unset( $post->ID ); // Make sure we don't try to reuse the same post ID
 		$meta_values = get_post_meta( $source_id );
+//print_r( $post );die;
+switch_to_blog( $to );
+$post_date_unix = strtotime( $post->post_date );
+$args = array(
+	'post_type'  => $this->post_type,
+	'post_name'  => $post->post_name,
+	'date_query' => array(
+		array(
+			'year'   => date( 'Y', $post_date_unix ),
+			'month'  => date( 'm', $post_date_unix ),
+			'day'    => date( 'd', $post_date_unix ),
+			'hour'   => date( 'H', $post_date_unix ),
+			'minute' => date( 'i', $post_date_unix ),
+			'second' => date( 's', $post_date_unix ),
+		),
+	),
+);
+$query = new WP_Query( $args );
+
+switch_to_blog( $from );
+
+echo "\n\n_________\n\n";
+print_r( $post );
+echo "\n\n_________\n\n";
+print_r( $query );
+
+die;
+// Check if event already exists
+
 
 		// Get the tags from the post we are copying
 		$sourcetags = wp_get_post_tags( $source_id, array( 'fields' => 'names' ) );
