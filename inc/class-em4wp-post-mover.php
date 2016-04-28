@@ -15,6 +15,38 @@ class EM4WP_Post_Mover {
 		$this->sites = $sites;
 
 		add_action( 'save_post', array( $this, 'save_post' ), 200 );
+		add_action( 'template_redirect',      array( $this, 'rel_canonical_init' ) );
+	}
+
+	public function rel_canonical_init() {
+		if ( $this->post_type == get_post_type() && is_single() ) {
+			remove_action( 'wp_head', 'rel_canonical' );
+			add_action( 'wp_head', array( $this, 'rel_canonical' ) );
+		}
+	}
+
+	public function rel_canonical() {
+
+		$canonical_blog_id = get_post_meta( get_the_ID(), 'source_blog_id', true );
+		$canonical_event_id = get_post_meta( get_the_ID(), 'source_event_id', true );
+
+		if ( $canonical_blog_id && $canonical_event_id ) {
+
+			// Briefly switch to source site to get permalink
+			switch_to_blog( $canonical_blog_id );
+			$canonical_url = get_permalink( $canonical_id );
+			switch_to_blog( $canonical_event_id );
+
+echo "\n\n\n\n\n\n\n\n\n__________________\n";
+			echo "<link rel='canonical' href='$canonical_url' />\n";
+echo "\n__________________\n\n\n\n\n\n\n\n\n";
+		}
+	 
+		// original code
+		$link = get_permalink( $id );
+		if ( $page = get_query_var('cpage') )
+			$link = get_comments_pagenum_link( $page );
+		echo "<link rel='canonical' href='$link' />\n";
 	}
 
 	/**
@@ -87,6 +119,7 @@ class EM4WP_Post_Mover {
 
 		// Get the posts data
 		$post = get_post( $source_id );
+		$source_post_id = $post->ID;
 		unset( $post->ID ); // Make sure we don't try to reuse the same post ID
 		$meta_values = get_post_meta( $source_id );
 
@@ -149,7 +182,10 @@ class EM4WP_Post_Mover {
 			}
 
 		}
+
 		add_post_meta( $post_id, 'source_blog_id', $from );
+		add_post_meta( $post_id, 'source_event_id', $source_post_id );
+echo "\n\n\n\n______________\n".$post_id.'|'.$source_post_id.':'.$from;die;
 
 		// If there were media attached to the sourse post content then copy that over
 		if ( $attached_images ) {
@@ -354,7 +390,7 @@ class EM4WP_Post_Mover {
 			'type' => $post_type,
 		);
 		$categories = wp_get_post_categories( $post_id, $args );
-	   
+		 
 		$array_of_category_objects = array();
 		foreach ( $categories as $category ) {
 			array_push( $array_of_category_objects, get_category( $category ) );
