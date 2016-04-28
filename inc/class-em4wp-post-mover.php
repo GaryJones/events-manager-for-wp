@@ -149,10 +149,11 @@ class EM4WP_Post_Mover {
 			}
 
 		}
+		add_post_meta( $post_id, 'source_blog_id', $from );
 
 		// If there were media attached to the sourse post content then copy that over
 		if ( $attached_images ) {
-			$this->process_post_media_attachements( $post_id, $attached_images, $attached_images_alt_tags, $from, $to );
+			$this->process_post_media_attachments( $post_id, $attached_images, $attached_images_alt_tags, $from, $to );
 		}
 
 		// If there was a featured image in the sourse post then copy it over
@@ -212,7 +213,7 @@ class EM4WP_Post_Mover {
 	 * @param int $to The ID of the blog these images are going to.
 	 * @return null
 	 */
-	public function process_post_media_attachements( $post_id, $post_media_attachments, $attached_images_alt_tags, $source_id, $to ){
+	public function process_post_media_attachments( $post_id, $post_media_attachments, $attached_images_alt_tags, $source_id, $to ){
 
 		// Variable to return the count of images we have processed and also to patch the source keys with the destination keys
 		$image_count = 0;
