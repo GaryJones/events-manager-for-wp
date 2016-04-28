@@ -24,6 +24,11 @@ class EM4WP_Post_Mover {
 	 */
 	public function save_post( $post_id ) {
 
+		// Bail out now if not even saving an event
+		if ( ! isset( $_POST['em4wp_events_calendar_date_time_nonce'] ) ) {
+			return;
+		}
+
 		// Bail out if just a post revision
 		if ( wp_is_post_revision( $post_id ) ) {
 			return $post_id;
@@ -38,6 +43,7 @@ class EM4WP_Post_Mover {
 		foreach ( $this->sites as $key => $site ) {
 
 			foreach ( $site as $from => $to ) {
+
 				if ( get_current_blog_id() == $from ) {
 
 					// Copy $post_id between relevant sites within $this->sites.
@@ -92,18 +98,11 @@ class EM4WP_Post_Mover {
 		$sourcetags = wp_get_post_tags( $source_id, array( 'fields' => 'names' ) );
 
 		// Get the categories for the post
-//		$source_categories = mpd_get_objects_of_post_categories( $source_id, $mpd_process_info['post_type']);
+		$source_categories = $this->get_objects_of_post_categories( $source_id, $this->post_type );
 
-//		$featured_image    = mpd_get_featured_image_from_source( $source_id );
+// Get the event-categories taxonomy terms for the post
 
-		// Collect data about attached images.
-//			$attached_images = mpd_get_images_from_the_content( $source_id );
-
-			if($attached_images){
-//				$attached_images_alt_tags   = mpd_get_image_alt_tags($attached_images);
-			}
-
-//		}
+		$featured_image    = $this->get_featured_image_from_source( $source_id );
 
 		////////////////////////////////////////////////
 		// Tell WordPress to work in the destination site
@@ -183,15 +182,15 @@ class EM4WP_Post_Mover {
 	 * the core function.
 	 *
 	 * @since 0.5
-	 * @param int $destination_post_id The ID of the post we are copying the media to
-	 * @param array $post_media_attachments An array of media library IDs to copy. Probably generated from mpd_get_images_from_the_content()
+	 * @param int $post_id The ID of the post we are copying the media to
+	 * @param array $post_media_attachments An array of media library IDs to copy. Probably generated from get_images_from_the_content()
 	 * @param array $attached_images_alt_tags An array of alt tags associated with the images in $post_media_attachments array. Mirrors the array order of this for association. Probably generated from mpd_get_image_alt_tags()
 	 * @param int $source_id The ID of the blog these images are being copied from.
-	 * @param int $new_blog_id The ID of the blog these images are going to.
+	 * @param int $to The ID of the blog these images are going to.
 	 * @return null
 	 */
-	public function process_post_media_attachements( $destination_post_id, $post_media_attachments, $attached_images_alt_tags, $source_id, $new_blog_id ){
-
+	public function process_post_media_attachements( $post_id, $post_media_attachments, $attached_images_alt_tags, $source_id, $to ){
+//echo $post_id.':'.$source_id.':'.$to;die;
 		// Variable to return the count of images we have processed and also to patch the source keys with the destination keys
 		$image_count = 0;
 		// Get array of the IDs of the source images pulled from the source content
@@ -212,7 +211,7 @@ class EM4WP_Post_Mover {
 			// ie   http://www.somesite.com/source_blog_path/uploads/10/10/file... will become
 			//      http://www.somesite.com/destination_blog_path/uploads/10/10/file...
 
-			$image_URL_without_EXT  = str_replace( get_blog_details( $new_blog_id )->siteurl, get_blog_details( $source_id )->siteurl, $image_URL_without_EXT );
+			$image_URL_without_EXT  = str_replace( get_blog_details( $to )->siteurl, get_blog_details( $source_id )->siteurl, $image_URL_without_EXT );
 
 			$filename               = basename( $post_media_attachment->guid );
 
@@ -227,7 +226,7 @@ class EM4WP_Post_Mover {
 
 			// Get the URL (not the URI) of the new file
 			$new_file_url = $upload_dir['url'] . '/' . $filename;
-			$new_file_url = str_replace( get_blog_details( $source_id )->siteurl, get_blog_details( $new_blog_id )->siteurl, $new_file_url );
+			$new_file_url = str_replace( get_blog_details( $source_id )->siteurl, get_blog_details( $to )->siteurl, $new_file_url );
 
 			// Add the file contents to the new path with the new filename
 			file_put_contents( $file, $image_data );
@@ -245,7 +244,7 @@ class EM4WP_Post_Mover {
 			);
 
 			// Attach the new file and its information to the database
-			$attach_id = wp_insert_attachment( $attachment, $file, $destination_post_id );
+			$attach_id = wp_insert_attachment( $attachment, $file, $post_id );
 
 			// Add alt text to the destination image
 			if ( $attached_images_alt_tags ) {
@@ -263,13 +262,13 @@ class EM4WP_Post_Mover {
 
 			// Now that we have all the data for the newly created file and its post we need to manipulate the old content so that
 			// it now reflects the destination post
-			$new_image_URL_without_EXT = mpd_get_image_new_url_without_extension($attach_id, $source_id, $new_blog_id, $new_file_url );
-			$old_content               = get_post_field( 'post_content', $destination_post_id );
+			$new_image_URL_without_EXT = mpd_get_image_new_url_without_extension($attach_id, $source_id, $to, $new_file_url );
+			$old_content               = get_post_field( 'post_content', $post_id );
 			$middle_content            = str_replace( $image_URL_info['dirname'] . "/" . $image_URL_info['filename'], $new_image_URL_without_EXT, $old_content );
 			$update_content            = str_replace( 'wp-image-' . $old_image_ids[$image_count], 'wp-image-' . $attach_id, $middle_content );
 
 			$post_update = array(
-				'ID'           => $destination_post_id,
+				'ID'           => $post_id,
 				'post_content' => $update_content
 			);
 
@@ -278,6 +277,66 @@ class EM4WP_Post_Mover {
 			$image_count++;
 		}
 
+	}
+
+	/**
+	 * Gets information on the featured image attached to a post
+	 *
+	 * This function will get the meta data and other information on the posts featured image; including the url
+	 * to the full size version of the image.
+	 *
+	 * @since 0.5
+	 * @param int $post_id The ID of the post that the featured image is attached to.
+	 * @return array
+	 *
+	 * Example
+	 *
+	 *          id => '23',
+	 *          url => 'http://www.example.com/image/image.jpg',
+	 *          alt => 'Image Alt Tag',
+	 *          description => 'Probably a big string of text here',
+	 *          caption => 'A nice caption for the image hopefully'
+	 *
+	 */
+	public function get_featured_image_from_source( $post_id ) {
+		$thumbnail_id   = get_post_thumbnail_id( $post_id );
+		$image          = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+		if ( $image ) {
+			$image_details = array(
+				'url'           => $image[0],
+				'alt'           => get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true ),
+				'post_title'    => get_post_field( 'post_title', $thumbnail_id ),
+				'description'   => get_post_field( 'post_content', $thumbnail_id ),
+				'caption'       => get_post_field( 'post_excerpt', $thumbnail_id ),
+				'post_name'     => get_post_field( 'post_name', $thumbnail_id )
+			);
+
+			return $image_details;
+		}
+	}
+
+	/**
+	 * This function gets all the categories that a post is assigned to
+	 *
+	 * @since 0.8
+	 * @param $post_id The id of the post that we want to get the categories for
+	 * @param $post_type The post type of the post that we want to get the categories for
+	 *
+	 * @return array An array of the category objects.
+	 *
+	 */
+	public function get_objects_of_post_categories( $post_id, $post_type ) {
+		$args = array(
+			'type' => $post_type,
+		);
+		$categories = wp_get_post_categories( $post_id, $args );
+	   
+		$array_of_category_objects = array();
+		foreach ( $categories as $category ) {
+			array_push( $array_of_category_objects, get_category( $category ) );
+		}
+
+		return $array_of_category_objects;
 	}
 
 }
