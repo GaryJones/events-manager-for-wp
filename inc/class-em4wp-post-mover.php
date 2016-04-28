@@ -15,6 +15,39 @@ class EM4WP_Post_Mover {
 		$this->sites = $sites;
 
 		add_action( 'save_post', array( $this, 'save_post' ), 200 );
+		add_action( 'template_redirect',      array( $this, 'rel_canonical_init' ) );
+	}
+
+	/**
+	 * Initialise the canonical setup.
+	 * Check for correct post type and singular status.
+	 * Removes WordPress's built in canonical code and replaces with our own.
+	 */
+	public function rel_canonical_init() {
+		if ( $this->post_type == get_post_type() && is_single() ) {
+			remove_action( 'wp_head', 'rel_canonical' );
+			add_action( 'wp_head', array( $this, 'rel_canonical' ) );
+		}
+	}
+
+	/**
+	 * Adds canonical link back to source post.
+	 */
+	public function rel_canonical() {
+
+		$canonical_blog_id = get_post_meta( get_the_ID(), 'source_blog_id', true );
+		$canonical_event_id = get_post_meta( get_the_ID(), 'source_event_id', true );
+
+		if ( $canonical_blog_id && $canonical_event_id ) {
+
+			// Briefly switch to source site to get permalink
+			switch_to_blog( $canonical_blog_id );
+			$canonical_url = get_permalink( $canonical_id );
+			switch_to_blog( $canonical_event_id );
+
+			echo "<link rel='canonical' href='$canonical_url' />\n";
+		}
+
 	}
 
 	/**
@@ -85,10 +118,9 @@ class EM4WP_Post_Mover {
 			switch_to_blog( $from );
 		}
 
-		$post_author = 1; // Should pick up origin post author
-
 		// Get the posts data
 		$post = get_post( $source_id );
+		$source_post_id = $post->ID;
 		unset( $post->ID ); // Make sure we don't try to reuse the same post ID
 		$meta_values = get_post_meta( $source_id );
 
@@ -152,9 +184,13 @@ class EM4WP_Post_Mover {
 
 		}
 
+		add_post_meta( $post_id, 'source_blog_id', $from );
+		add_post_meta( $post_id, 'source_event_id', $source_post_id );
+//echo "\n\n\n\n______________\n".$post_id.'|'.$source_post_id.':'.$from;die;
+
 		// If there were media attached to the sourse post content then copy that over
 		if ( $attached_images ) {
-			$this->process_post_media_attachements( $post_id, $attached_images, $attached_images_alt_tags, $from, $to );
+			$this->process_post_media_attachments( $post_id, $attached_images, $attached_images_alt_tags, $from, $to );
 		}
 
 		// If there was a featured image in the sourse post then copy it over
@@ -214,7 +250,7 @@ class EM4WP_Post_Mover {
 	 * @param int $to The ID of the blog these images are going to.
 	 * @return null
 	 */
-	public function process_post_media_attachements( $post_id, $post_media_attachments, $attached_images_alt_tags, $source_id, $to ){
+	public function process_post_media_attachments( $post_id, $post_media_attachments, $attached_images_alt_tags, $source_id, $to ){
 
 		// Variable to return the count of images we have processed and also to patch the source keys with the destination keys
 		$image_count = 0;
@@ -355,7 +391,7 @@ class EM4WP_Post_Mover {
 			'type' => $post_type,
 		);
 		$categories = wp_get_post_categories( $post_id, $args );
-	   
+		 
 		$array_of_category_objects = array();
 		foreach ( $categories as $category ) {
 			array_push( $array_of_category_objects, get_category( $category ) );
