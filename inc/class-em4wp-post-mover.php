@@ -18,6 +18,11 @@ class EM4WP_Post_Mover {
 		add_action( 'template_redirect',      array( $this, 'rel_canonical_init' ) );
 	}
 
+	/**
+	 * Initialise the canonical setup.
+	 * Check for correct post type and singular status.
+	 * Removes WordPress's built in canonical code and replaces with our own.
+	 */
 	public function rel_canonical_init() {
 		if ( $this->post_type == get_post_type() && is_single() ) {
 			remove_action( 'wp_head', 'rel_canonical' );
@@ -25,6 +30,9 @@ class EM4WP_Post_Mover {
 		}
 	}
 
+	/**
+	 * Adds canonical link back to source post.
+	 */
 	public function rel_canonical() {
 
 		$canonical_blog_id = get_post_meta( get_the_ID(), 'source_blog_id', true );
@@ -37,16 +45,9 @@ class EM4WP_Post_Mover {
 			$canonical_url = get_permalink( $canonical_id );
 			switch_to_blog( $canonical_event_id );
 
-echo "\n\n\n\n\n\n\n\n\n__________________\n";
 			echo "<link rel='canonical' href='$canonical_url' />\n";
-echo "\n__________________\n\n\n\n\n\n\n\n\n";
 		}
-	 
-		// original code
-		$link = get_permalink( $id );
-		if ( $page = get_query_var('cpage') )
-			$link = get_comments_pagenum_link( $page );
-		echo "<link rel='canonical' href='$link' />\n";
+
 	}
 
 	/**
@@ -185,7 +186,7 @@ echo "\n__________________\n\n\n\n\n\n\n\n\n";
 
 		add_post_meta( $post_id, 'source_blog_id', $from );
 		add_post_meta( $post_id, 'source_event_id', $source_post_id );
-echo "\n\n\n\n______________\n".$post_id.'|'.$source_post_id.':'.$from;die;
+//echo "\n\n\n\n______________\n".$post_id.'|'.$source_post_id.':'.$from;die;
 
 		// If there were media attached to the sourse post content then copy that over
 		if ( $attached_images ) {
