@@ -48,8 +48,6 @@ class EM4WP_Post_Mover {
 
 					// Copy $post_id between relevant sites within $this->sites.
 					$this->duplicate_over_multisite( $from, $to, $post_id, $this->post_type, 'author??' );
-					echo 'Saving Event!';
-					die;
 
 				}
 			}
