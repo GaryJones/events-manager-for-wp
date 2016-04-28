@@ -190,7 +190,7 @@ class EM4WP_Post_Mover {
 	 * @return null
 	 */
 	public function process_post_media_attachements( $post_id, $post_media_attachments, $attached_images_alt_tags, $source_id, $to ){
-//echo $post_id.':'.$source_id.':'.$to;die;
+
 		// Variable to return the count of images we have processed and also to patch the source keys with the destination keys
 		$image_count = 0;
 		// Get array of the IDs of the source images pulled from the source content
