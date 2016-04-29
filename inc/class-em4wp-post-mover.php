@@ -1,6 +1,6 @@
 <?php
 
-class EM4WP_Post_Mover {
+class EM4WP_Post_Mover extends EM4WP_Events_Core {
 
 	/**
 	 * Class constructor.
@@ -14,9 +14,48 @@ class EM4WP_Post_Mover {
 		$this->post_type = $post_type;
 		$this->sites = $sites;
 
-		add_action( 'save_post', array( $this, 'save_post' ), 200 );
-		add_action( 'template_redirect',      array( $this, 'rel_canonical_init' ) );
+		add_action( 'save_post',         array( $this, 'save_post' ), 200 );
+		add_action( 'admin_head',        array( $this, 'lock_event' ) );
+		add_action( 'template_redirect', array( $this, 'rel_canonical_init' ) );
 	}
+
+	public function lock_event() {
+
+		if ( ! isset( $_GET['post'] ) ) {
+			return;
+		}
+
+		$id = absint( $_GET['post'] );
+
+		if (
+			$this->post_type == get_post_type( $id )
+			&&
+			'' != get_post_meta( $id, 'source_blog_id', true )
+		) {
+
+			$canonical_blog_id = get_post_meta( $id, 'source_blog_id', true );
+			$canonical_event_id = get_post_meta( $id, 'source_event_id', true );
+			$url = get_site_url( $canonical_blog_id, '/wp-admin/post.php?post=' . absint( $canonical_event_id ) . '&action=edit' );
+//http://dev.hellyer.kiwi/wp-admin/post.php?post=19747&action=edit
+			echo "<script>
+				var em4wp_publish_text = 'Locked';
+				var em4wp_locked_text = 'To edit this event, please use the source post.';
+				var em4wp_source_post = '" . $url . "';
+
+				document.addEventListener('DOMContentLoaded', function(){ 
+					var publish_button = document.getElementById( 'publish' );
+					publish_button.value = em4wp_publish_text;
+					publish_button.disabled = true;
+
+					var trash_button = document.getElementById( 'delete-action' );
+					trash_button.innerHTML = '<a href=\"'+em4wp_source_post+'\" class=\"submitdelete deletion\">'+em4wp_locked_text+'</span>';
+					//.style.display = 'none';
+				}, false);
+			</script>";
+
+		}
+	}
+
 
 	/**
 	 * Initialise the canonical setup.
