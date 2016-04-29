@@ -72,12 +72,3 @@ new EM4WP_Events_Calendar_View;
 new EM4WP_Upcoming_Events;
 new EM4WP_Locations;
 new EM4WP_Events_Archive;
-
-$current_site_id = get_current_blog_id();
-$sites = array(
-	0 => array(
-		$current_site_id => 1,
-	),
-);
-new EM4WP_Post_Mover( $sites, 'event' );
-
