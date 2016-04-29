@@ -46,7 +46,7 @@ define( 'EM4WP_EVENTS_CALENDAR_PLUGIN_FILE', __FILE__ );
 function autoload_em4wp( $class ) {
 
 	// Bail out if not loading a Media Manager class
-	if ( 'EM4WP_' != substr( $class, 0, 6 ) ) {
+	if ( 'EM4WP_' != substr( $class, 0, 6 ) || class_exists( $class ) ) {
 		return;
 	}
 
