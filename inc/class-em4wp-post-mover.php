@@ -16,11 +16,11 @@ class EM4WP_Post_Mover extends EM4WP_Events_Core {
 
 		add_action( 'save_post',         array( $this, 'save_post' ), 200 );
 		add_action( 'admin_head',        array( $this, 'lock_event' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'js_vars' ) );
 		add_action( 'template_redirect', array( $this, 'rel_canonical_init' ) );
 	}
 
-	public function lock_event() {
-
+	public function js_vars() {
 		if ( ! isset( $_GET['post'] ) ) {
 			return;
 		}
@@ -36,23 +36,31 @@ class EM4WP_Post_Mover extends EM4WP_Events_Core {
 			$canonical_blog_id = get_post_meta( $id, 'source_blog_id', true );
 			$canonical_event_id = get_post_meta( $id, 'source_event_id', true );
 			$url = get_site_url( $canonical_blog_id, '/wp-admin/post.php?post=' . absint( $canonical_event_id ) . '&action=edit' );
-//http://dev.hellyer.kiwi/wp-admin/post.php?post=19747&action=edit
-			echo "<script>
-				var em4wp_publish_text = 'Locked';
-				var em4wp_locked_text = 'To edit this event, please use the source post.';
-				var em4wp_source_post = '" . $url . "';
 
-				document.addEventListener('DOMContentLoaded', function(){ 
-					var publish_button = document.getElementById( 'publish' );
-					publish_button.value = em4wp_publish_text;
-					publish_button.disabled = true;
+			$slug = 'em4wp_locked';
 
-					var trash_button = document.getElementById( 'delete-action' );
-					trash_button.innerHTML = '<a href=\"'+em4wp_source_post+'\" class=\"submitdelete deletion\">'+em4wp_locked_text+'</span>';
-					//.style.display = 'none';
-				}, false);
-			</script>";
+			wp_register_script( $slug, plugins_url( '/js/events-locked.js', dirname( __FILE__ ) ) );
+			wp_enqueue_script( $slug );
+			wp_localize_script( $slug, 'em4wp_publish_text', 'Locked' );
+			wp_localize_script( $slug, 'em4wp_locked_text', 'To edit this event, please use the source post.' );
+			wp_localize_script( $slug, 'em4wp_source_post', $url );
+		}
 
+	}
+
+	public function lock_event() {
+
+		if ( ! isset( $_GET['post'] ) ) {
+			return;
+		}
+
+		$id = absint( $_GET['post'] );
+
+		if (
+			$this->post_type == get_post_type( $id )
+			&&
+			'' != get_post_meta( $id, 'source_blog_id', true )
+		) {
 		}
 	}
 
