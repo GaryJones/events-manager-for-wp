@@ -98,7 +98,8 @@ class EM4WP_Read_More {
 		if ( '' != $url && '' != $text ) {
 			$content .= '
 			<div class="em4wp-one-half">
-				<a href="' . esc_url( $url ) . '">' . $text . '</a>
+				<h3>' . __( 'More information', 'events-manager-for-wp' ) . '</h3>
+				<a class="button" href="' . esc_url( $url ) . '">' . $text . '</a>
 			</div>';
 		}
 

@@ -197,10 +197,13 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 
 			if ( '' != $latitude && '' != $longitude ) {
 
-				$content .= '<div class="em4wp-full">';
+				$content .= '
+				<div class="em4wp-full">
+					<h3>' . __( 'Event location', 'events-manager-for-wp' ) . '</h3>';
 
 				$embed_url = 'https://maps.google.com/maps?q=' . $latitude . ',' . $longitude . '&z=14&output=embed&iwloc=0';
-				$content .= '<iframe src="' . esc_url( $embed_url ) . '" ';
+				$content .= '
+					<iframe src="' . esc_url( $embed_url ) . '" ';
 
 				if ( isset( $location['width'] ) ) {
 					$content .= ' width="' . esc_attr( $location['width'] ) . '"';
@@ -211,7 +214,8 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 
 				$content .= 'frameborder="0" allowfullscreen></iframe>';
 
-				$content .= '</div>';
+				$content .= '
+				</div>';
 			}
 		}
 

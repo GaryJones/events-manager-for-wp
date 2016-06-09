@@ -32,6 +32,7 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 		// Show the start date/time
 		$content .= '
 		<div class="em4wp-one-half">
+			<h3>' . __( 'Date', 'events-manager-for-wp' ) . '</h3>
 			' . __( 'Start time: ', '' ) . date( get_option( 'date_format' ), $start );
 		if ( 1 != $allday ) {
 			$content .= ', ' . date( 'H:i:s', $start );
@@ -39,14 +40,14 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 
 		// Show the end date/time
 		if ( '' != $end ) {
-			echo '
+			$content .= '
 				' . __( 'End time: ', '' ) . date( get_option( 'date_format' ), $end );
 			if ( 1 != $allday ) {
 				$content .= ', ' . date( 'H:i:s', $end );
 			}
 		}
 
-		echo '
+		$content .= '
 		</div>';
 
 		return $content;
@@ -56,11 +57,14 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 	 * Adding CSS for event posts.
 	 */
 	public function css() {
+
+		// Bail out if not on event post-type
 		if ( 'event' != get_post_type() ) {
 			return;
 		}
 
-		//add CSS enqueue here
+		$css_url = plugins_url( 'css/events-single.css', dirname(__FILE__) );
+		wp_enqueue_style( 'em4wp-css', $css_url );
 
 	}
 

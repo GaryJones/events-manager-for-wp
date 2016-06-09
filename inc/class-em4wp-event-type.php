@@ -15,7 +15,7 @@ class EM4WP_Event_Type extends EM4WP_Events_Core {
 		parent::__construct();
 
 		add_action( 'init',           array( $this, 'register_taxonomy' ) );
-		add_filter( 'the_content',    array( $this, 'the_content' ), 27 );
+		add_filter( 'the_content',    array( $this, 'the_content' ), 29 );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class EM4WP_Event_Type extends EM4WP_Events_Core {
 	public function the_content( $content ) {
 
 		if ( 'event' != get_post_type() ) {
-			return;
+			return $content;
 		}
 
 		$terms = get_terms( array(
@@ -58,15 +58,16 @@ class EM4WP_Event_Type extends EM4WP_Events_Core {
 
 			foreach ( $terms as $term ) {
 				$url = get_term_link( $term->term_id );
-				echo '
-				<li>
-					<a href="' . esc_url( $url ) . '">
-						' . esc_html( $term->name ) . '
-					</a>
-				</li>';
+				$content .= '
+					<li>
+						<a href="' . esc_url( $url ) . '">
+							' . esc_html( $term->name ) . '
+						</a>
+					</li>';
 			}
 
-			$content .= '</ul>
+			$content .= '
+				</ul>
 			</div>';
 		}
 
