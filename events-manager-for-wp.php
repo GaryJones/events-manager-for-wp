@@ -73,3 +73,4 @@ new EM4WP_Locations;
 new EM4WP_Events_Archive;
 new EM4WP_Frontend;
 new EM4WP_Event_Type;
+new EM4WP_Read_More;
