@@ -38,13 +38,13 @@ class EM4WP_Read_More {
 		?>
 
 		<p>
-			<label for="_read_more_text"><strong><?php _e( 'Read more text', 'events-manager-for-wp' ); ?></strong></label>
+			<label for="_read_more_text"><strong><?php _e( 'Text', 'events-manager-for-wp' ); ?></strong></label>
 			<br />
 			<input type="text" name="_read_more_text" id="_read_more_text" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_read_more_text', true ) ); ?>" />
 		</p>
 
 		<p>
-			<label for="_read_more_url"><strong><?php _e( 'Read more URL', 'events-manager-for-wp' ); ?></strong></label>
+			<label for="_read_more_url"><strong><?php _e( 'URL', 'events-manager-for-wp' ); ?></strong></label>
 			<br />
 			<input type="text" name="_read_more_url" id="_read_more_url" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_read_more_url', true ) ); ?>" />
 		</p>
