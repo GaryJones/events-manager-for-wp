@@ -197,6 +197,8 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 
 			if ( '' != $latitude && '' != $longitude ) {
 
+				$content .= '<div class="em4wp-full">';
+
 				$embed_url = 'https://maps.google.com/maps?q=' . $latitude . ',' . $longitude . '&z=14&output=embed&iwloc=0';
 				$content .= '<iframe src="' . esc_url( $embed_url ) . '" ';
 
@@ -208,6 +210,8 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 				}
 
 				$content .= 'frameborder="0" allowfullscreen></iframe>';
+
+				$content .= '</div>';
 			}
 		}
 
