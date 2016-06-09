@@ -35,6 +35,10 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 	 */
 	public function create_admin_page() {
 
+		// Flush the rewrite rules - needed due to the settings page making changes to the rewrite rules
+		flush_rewrite_rules();
+
+		// Add the submenu page
 		add_submenu_page(
 			'edit.php?post_type=event',
 			__ ( 'Settings', 'events-manager-for-wp' ), // Page title
@@ -75,6 +79,15 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 						</th>
 						<td>
 							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]" value="<?php echo esc_attr( $this->get_option( 'permalink-archive' ) ); ?>" />
+						</td>
+					</tr>
+
+					<tr>
+						<th>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-upcoming]"><?php _e( 'The upcoming events slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
+						</th>
+						<td>
+							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-upcoming]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-upcoming]" value="<?php echo esc_attr( $this->get_option( 'permalink-upcoming' ) ); ?>" />
 						</td>
 					</tr>
 
