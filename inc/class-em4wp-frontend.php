@@ -19,9 +19,12 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 
 	/**
 	 * the_content() filter.
+	 *
+	 * @param  string  $content  The post content
+	 * @return string  The modified post content
 	 */
 	public function the_content( $content ) {
-//		$content .= print_r( get_post_meta( get_the_ID() ), true );
+
 		$start = get_post_meta( get_the_ID(), 'em4wp_event_start', true );
 		$end = get_post_meta( get_the_ID(), 'em4wp_event_end', true );
 		$allday = get_post_meta( get_the_ID(), 'em4wp_event_allday', true );
@@ -45,12 +48,11 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 
 		echo '
 		</div>';
+
 		return $content;
 /*
-		DATE
 		EVENT TYPE
 		MORE INFORMATION LINK
-		LOCATION 30
 */
 	}
 
