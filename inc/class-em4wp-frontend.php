@@ -50,10 +50,6 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 		</div>';
 
 		return $content;
-/*
-		EVENT TYPE
-		MORE INFORMATION LINK
-*/
 	}
 
 	/**
