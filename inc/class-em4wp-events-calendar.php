@@ -10,8 +10,6 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 	 */
 	public function __construct() {
 
-		parent::__construct();
-
 		// Fire on activation
 		register_activation_hook( EM4WP_EVENTS_CALENDAR_PLUGIN_FILE, array( $this, 'activation' ) );
 
@@ -87,7 +85,7 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 			'show_ui'            => true, 
 			'show_in_menu'       => true, 
 			'query_var'          => true,
-			'rewrite'            => array( 'slug' => $this->event_slug, 'with_front' => false ),
+			'rewrite'            => array( 'slug' => $this->get_option( 'permalink-slug' ), 'with_front' => false ),
 			'capability_type'    => 'post',
 			'has_archive'        => true, 
 			'hierarchical'       => false,

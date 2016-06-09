@@ -14,8 +14,6 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 
 		$this->archive_slug = __( 'archive', 'events-manager-for-wp' );
 
-		parent::__construct();
-
 		add_action( 'init', array( $this, 'rewrite_endpoint' ) );
 
 		add_filter(
@@ -32,7 +30,7 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 
 	function rewrite_endpoint() {
 		// Adding rewrite rule for URL's
-		add_rewrite_rule( $this->event_slug . '/' . $this->archive_slug . '/?$', 'index.php?post_type=event&' . $this->archive_slug . '=1', 'top' );
+		add_rewrite_rule( $this->get_option( 'permalink-slug' ) . '/' . $this->archive_slug . '/?$', 'index.php?post_type=event&' . $this->archive_slug . '=1', 'top' );
 	}
 
 	/**

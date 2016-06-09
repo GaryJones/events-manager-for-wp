@@ -10,14 +10,11 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 	 */
 	const MENU_SLUG = 'em4wp-page';
 	const GROUP     = 'em4wp-group';
-	const OPTION    = 'em4wp-option';
 
 	/**
 	 * Fire the constructor up :)
 	 */
 	public function __construct() {
-
-		// Add to hooks
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_menu', array( $this, 'create_admin_page' ) );
 	}
@@ -28,7 +25,7 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 	public function register_settings() {
 		register_setting(
 			self::GROUP,               // The settings group name
-			self::OPTION,              // The option name
+			$this->slug,               // The option name
 			array( $this, 'sanitize' ) // The sanitization callback
 		);
 	}
@@ -64,10 +61,10 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 				<table class="form-table">
 					<tr>
 						<th>
-							<label for="<?php echo esc_attr( self::OPTION ); ?>"><?php _e( 'Enter your input string.', 'events-manager-for-wp' ); ?></label>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]"><?php _e( 'The event slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
 						</th>
 						<td>
-							<input type="text" id="<?php echo esc_attr( self::OPTION ); ?>" name="<?php echo esc_attr( self::OPTION ); ?>" value="<?php echo esc_attr( get_option( self::OPTION ) ); ?>" />
+							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]" value="<?php echo esc_attr( $this->get_option( 'permalink-slug' ) ); ?>" />
 						</td>
 					</tr>
 				</table>
@@ -84,10 +81,15 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 	 * Sanitize the page or product ID
 	 *
 	 * @param   string   $input   The input string
-	 * @return  array             The sanitized string
+	 * @return  array    $output  The sanitized string
 	 */
 	public function sanitize( $input ) {
-		$output = wp_kses_post( $input );
+
+		$output = array();
+		foreach ( $input as $key => $item ) {
+			$output[$key] = wp_kses_post( $item );
+		}
+
 		return $output;
 	}
 

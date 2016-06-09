@@ -10,8 +10,6 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 	 */
 	public function __construct() {
 
-		parent::__construct();
-
 		add_filter( 'the_content', array( $this, 'the_content' ), 25 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'css' ) );
 

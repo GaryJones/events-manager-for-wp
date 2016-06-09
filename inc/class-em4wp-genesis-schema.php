@@ -9,9 +9,6 @@ class EM4WP_Genesis_Schema extends EM4WP_Events_Core {
 	 * Class constructor.
 	 */
 	public function __construct() {
-
-		parent::__construct();
-
 		add_action( 'plugins_loaded', array( $this, 'init' ) );	
 	}
 
@@ -37,7 +34,7 @@ class EM4WP_Genesis_Schema extends EM4WP_Events_Core {
 	public function empty_schema( $attr ) {
 
 		// Only run on events archive
-		if( !is_post_type_archive( $this->event_slug ) ) {
+		if ( ! is_post_type_archive( 'event' ) ) {
 			return $attr;
 		}
 
@@ -56,7 +53,7 @@ class EM4WP_Genesis_Schema extends EM4WP_Events_Core {
 	public function event_schema( $attr ) {
 
 		// Only run on event
-		if( ! $this->event_slug == get_post_type() )
+		if( ! $this->event_post_type == get_post_type() )
 			return $attr;
 			
 		$attr['itemtype'] = 'http://schema.org/Event';
@@ -72,7 +69,7 @@ class EM4WP_Genesis_Schema extends EM4WP_Events_Core {
 	 * @return array
 	 */
 	public function event_name_itemprop( $attr ) {
-		if ( $this->event_slug == get_post_type() )
+		if ( $this->event_post_type == get_post_type() )
 			$attr['itemprop'] = 'name';
 		return $attr;
 	}
@@ -84,7 +81,7 @@ class EM4WP_Genesis_Schema extends EM4WP_Events_Core {
 	 * @return array
 	 */
 	public function event_description_itemprop( $attr ) {
-		if ( $this->event_slug == get_post_type() )
+		if ( $this->event_post_type == get_post_type() )
 			$attr['itemprop'] = 'description';
 		return $attr;
 	}
@@ -96,7 +93,7 @@ class EM4WP_Genesis_Schema extends EM4WP_Events_Core {
 	 * @return string
 	 */
 	public function title_link( $output ) {
-		if ( $this->event_slug == get_post_type() ) {
+		if ( $this->event_post_type == get_post_type() ) {
 			$output = str_replace( 'rel="bookmark"', 'rel="bookmark" itemprop="url"', $output );
 		}
 
@@ -107,7 +104,7 @@ class EM4WP_Genesis_Schema extends EM4WP_Events_Core {
 	 * Event Date.
 	 */
 	public function event_date() {
-		if ( $this->event_slug !== get_post_type() ) {
+		if ( $this->event_post_type !== get_post_type() ) {
 			return;
 		}
 

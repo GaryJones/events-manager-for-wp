@@ -11,9 +11,6 @@ class EM4WP_Event_Type extends EM4WP_Events_Core {
 	 * Class constructor.
 	 */
 	public function __construct() {
-
-		parent::__construct();
-
 		add_action( 'init',           array( $this, 'register_taxonomy' ) );
 		add_filter( 'the_content',    array( $this, 'the_content' ), 29 );
 	}

@@ -9,9 +9,6 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 	 * Class constructor.
 	 */
 	public function __construct() {
-
-		parent::__construct();
-
 		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
 		add_action( 'save_post',      array( $this, 'meta_boxes_save' ), 10, 2 );
 		add_filter( 'the_content',    array( $this, 'the_content' ), 30 );
@@ -28,7 +25,7 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 				$this,
 				'meta_box', // Callback to method to display HTML
 			),
-			$this->event_slug, // Post type
+			$this->event_post_type, // Post type
 			'normal', // Context, choose between 'normal', 'advanced', or 'side'
 			'high'  // Position, choose between 'high', 'core', 'default' or 'low'
 		);
@@ -184,7 +181,7 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 	public function the_content( $content ) {
 
 		// Bail out now if we are not on an event
-		if( $this->event_slug != get_post_type() ) {
+		if( $this->event_post_type != get_post_type() ) {
 			return $content;
 		}
 

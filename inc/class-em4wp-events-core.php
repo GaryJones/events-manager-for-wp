@@ -5,13 +5,29 @@
  */
 class EM4WP_Events_Core {
 
-	public $event_slug;
+	public $slug = 'events-manager-for-wp';
+	public $event_post_type = 'event';
 
 	/**
-	 * Class constructor.
+	 * Internal system for accessing plugin settings.
 	 */
-	public function __construct() {
-		$this->event_slug = __( 'event', 'events-manager-for-wp' );
+	public function get_option( $option ) {
+		$options = get_option( $this->slug );
+
+		// Add defaults if they don't already exist
+		if ( '' == $options ) {
+			$defaults = array(
+				'permalink-slug' => 'event',
+			);
+			add_option( $this->slug, $defaults );
+		}
+
+		if ( isset( $options[$option] ) ) {
+			return $options[$option];
+		} else {
+			return false;
+		}
+
 	}
 
 }
