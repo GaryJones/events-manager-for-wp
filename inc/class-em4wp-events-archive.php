@@ -19,7 +19,7 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 		add_filter(
 			'query_vars',
 			function( $vars ) {
-				$vars[] = $this->archive_slug;
+				$vars[] = $this->get_option( 'permalink-archive' );
 				return $vars;
 			}
 		);
@@ -28,9 +28,17 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 
 	}
 
-	function rewrite_endpoint() {
-		// Adding rewrite rule for URL's
-		add_rewrite_rule( $this->get_option( 'permalink-slug' ) . '/' . $this->archive_slug . '/?$', 'index.php?post_type=event&' . $this->archive_slug . '=1', 'top' );
+	/**
+	 * Rewriting the archive URLs.
+	 */
+	public function rewrite_endpoint() {
+
+		add_rewrite_rule(
+			$this->get_option( 'permalink-slug' ) . '/' . $this->get_option( 'permalink-archive' ) . '/?$',
+			'index.php?post_type=event&' . $this->get_option( 'permalink-archive' ) . '=1',
+			'top'
+		);
+
 	}
 
 	/**
@@ -39,9 +47,9 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 	 * @param  object  $query  The main page query
 	 * @return object  The modified main page query
 	 */
-	function modify_archive_query( $query ) {
+	public function modify_archive_query( $query ) {
 
-		if ( '' != get_query_var( 'archive' ) && $query->is_main_query() && !is_admin() && ( is_post_type_archive( 'event' ) || is_tax( 'event-category' ) ) ) {	
+		if ( '' != get_query_var( $this->get_option( 'permalink-archive' ) ) && $query->is_main_query() && ! is_admin() && ( is_post_type_archive( 'event' ) || is_tax( 'event-category' ) ) ) {
 
 			$meta_query = array(
 				array(

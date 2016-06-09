@@ -17,7 +17,8 @@ class EM4WP_Events_Core {
 		// Add defaults if they don't already exist
 		if ( '' == $options ) {
 			$defaults = array(
-				'permalink-slug' => 'event',
+				'permalink-slug'    => 'event',
+				'permalink-archive' => 'archive',
 			);
 			add_option( $this->slug, $defaults );
 		}

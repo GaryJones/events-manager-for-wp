@@ -23,6 +23,11 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 	 */
 	public function the_content( $content ) {
 
+		// Bail out now if not on event post-type
+		if ( 'event' != get_post_type() ) {
+			return $content;
+		}
+
 		$start = get_post_meta( get_the_ID(), '_event_start', true );
 		$end = get_post_meta( get_the_ID(), '_event_end', true );
 		$allday = get_post_meta( get_the_ID(), '_event_allday', true );

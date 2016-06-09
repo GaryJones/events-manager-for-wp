@@ -59,6 +59,7 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 			<form method="post" action="options.php">
 
 				<table class="form-table">
+
 					<tr>
 						<th>
 							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]"><?php _e( 'The event slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
@@ -67,6 +68,16 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]" value="<?php echo esc_attr( $this->get_option( 'permalink-slug' ) ); ?>" />
 						</td>
 					</tr>
+
+					<tr>
+						<th>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]"><?php _e( 'The archive slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
+						</th>
+						<td>
+							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]" value="<?php echo esc_attr( $this->get_option( 'permalink-archive' ) ); ?>" />
+						</td>
+					</tr>
+
 				</table>
 
 				<?php settings_fields( self::GROUP ); ?>
