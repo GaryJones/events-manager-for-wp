@@ -79,7 +79,7 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 			'parent_item_colon'  => '',
 			'menu_name'          => __( 'Events', 'events-manager-for-wp' )
 		);
-	
+
 		$args = array(
 			'labels'             => $labels,
 			'public'             => true,
