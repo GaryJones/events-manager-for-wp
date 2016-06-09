@@ -47,7 +47,7 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 
 			$meta_query = array(
 				array(
-					'key' => 'em4wp_event_end',
+					'key' => '_event_end',
 					'value' => (int) current_time( 'timestamp' ),
 					'compare' => '<'
 				)
@@ -55,7 +55,7 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 			$query->set( 'orderby', 'meta_value_num' );
 			$query->set( 'order', 'ASC' );
 			$query->set( 'meta_query', $meta_query );
-			$query->set( 'meta_key', 'em4wp_event_start' );
+			$query->set( 'meta_key', '_event_start' );
 		}
 
 		return $query;

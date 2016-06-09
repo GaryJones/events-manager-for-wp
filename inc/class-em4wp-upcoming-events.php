@@ -30,10 +30,10 @@ class EM4WP_Upcoming_Events extends WP_Widget {
 			'posts_per_page' => $count,
 			'order'          => 'ASC',
 			'orderby'        => 'meta_value_num',
-			'meta_key'       => 'em4wp_event_start',
+			'meta_key'       => '_event_start',
 			'meta_query'     => array(
 				array(
-					'key'     => 'em4wp_event_end',
+					'key'     => '_event_end',
 					'value'   => time(),
 					'compare' => '>',
 				)
@@ -51,7 +51,7 @@ class EM4WP_Upcoming_Events extends WP_Widget {
 
 			while( $loop->have_posts() ): $loop->the_post();
 				global $post;
-				$output = '<span class="meta">' . date( get_option( 'date_format' ), get_post_meta( get_the_ID(), 'em4wp_event_start', true ) ) . '</span> <a href="' . get_permalink() . '">' . get_the_title() . '</a>';
+				$output = '<span class="meta">' . date( get_option( 'date_format' ), get_post_meta( get_the_ID(), '_event_start', true ) ) . '</span> <a href="' . get_permalink() . '">' . get_the_title() . '</a>';
 
 				$read_more = apply_filters( 'em4wp_events_manager_upcoming_widget_output', $output, $post );
 				if ( $read_more ) {

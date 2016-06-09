@@ -25,9 +25,9 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 	 */
 	public function the_content( $content ) {
 
-		$start = get_post_meta( get_the_ID(), 'em4wp_event_start', true );
-		$end = get_post_meta( get_the_ID(), 'em4wp_event_end', true );
-		$allday = get_post_meta( get_the_ID(), 'em4wp_event_allday', true );
+		$start = get_post_meta( get_the_ID(), '_event_start', true );
+		$end = get_post_meta( get_the_ID(), '_event_end', true );
+		$allday = get_post_meta( get_the_ID(), '_event_allday', true );
 
 		// Show the start date/time
 		$content .= '

@@ -141,7 +141,7 @@ class EM4WP_Events_Calendar_View {
 			'post_type' => 'event',
 			'meta_query' => array(
 				array(
-					'key'     => 'em4wp_event_start',
+					'key'     => '_event_start',
 					'value'   => array( $start_unix, $end_unix ),
 					'type'    => 'NUMERIC',
 					'compare' => 'BETWEEN',
@@ -150,9 +150,9 @@ class EM4WP_Events_Calendar_View {
 		);									
 		$events = new WP_Query( $events_args ); while( $events->have_posts() ) : $events->the_post();
 			$all_day         = false;
-			$start_timestamp = get_post_meta( get_the_ID(), 'em4wp_event_start', true );
+			$start_timestamp = get_post_meta( get_the_ID(), '_event_start', true );
 			$start_time      = date( 'g:iA', $start_timestamp );
-			$end_timestamp   = get_post_meta( get_the_ID(), 'em4wp_event_end', true );
+			$end_timestamp   = get_post_meta( get_the_ID(), '_event_end', true );
 			$end_time        = date( 'g:iA', $end_timestamp );
 
 			// Determine if the event is "all day". If the editor selects "All Day" checkbox,

@@ -135,9 +135,9 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 			case 'event_start' :
 
 				/* Get the post meta. */
-				$allday = get_post_meta( $post_id, 'em4wp_event_allday', true );
+				$allday = get_post_meta( $post_id, '_event_allday', true );
 				$date_format = $allday ? 'M j, Y' : 'M j, Y g:i A';
-				$start = esc_attr( date( $date_format, get_post_meta( $post_id, 'em4wp_event_start', true ) ) );
+				$start = esc_attr( date( $date_format, get_post_meta( $post_id, '_event_start', true ) ) );
 
 				/* If no duration is found, output a default message. */
 				if ( empty( $start ) )
@@ -153,9 +153,9 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 			case 'event_end' :
 
 				/* Get the post meta. */
-				$allday = get_post_meta( $post_id, 'em4wp_event_allday', true );
+				$allday = get_post_meta( $post_id, '_event_allday', true );
 				$date_format = $allday ? 'M j, Y' : 'M j, Y g:i A';
-				$end = esc_attr( date( $date_format, get_post_meta( $post_id, 'em4wp_event_end', true ) ) );
+				$end = esc_attr( date( $date_format, get_post_meta( $post_id, '_event_end', true ) ) );
 
 				/* If no duration is found, output a default message. */
 				if ( empty( $end ) )
@@ -213,7 +213,7 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 				$vars = array_merge(
 					$vars,
 					array(
-						'meta_key' => 'em4wp_event_start',
+						'meta_key' => '_event_start',
 						'orderby' => 'meta_value_num'
 					)
 				);
@@ -226,7 +226,7 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 				$vars = array_merge(
 					$vars,
 					array(
-						'meta_key' => 'em4wp_event_end',
+						'meta_key' => '_event_end',
 						'orderby' => 'meta_value_num'
 					)
 				);
@@ -307,9 +307,9 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 	 */
 	public function render_metabox() {
 
-		$start  = get_post_meta( get_the_ID() , 'em4wp_event_start', true );
-		$end    = get_post_meta( get_the_ID() , 'em4wp_event_end',   true );
-		$allday = get_post_meta( get_the_ID(), 'em4wp_event_allday', true );
+		$start  = get_post_meta( get_the_ID() , '_event_start', true );
+		$end    = get_post_meta( get_the_ID() , '_event_end',   true );
+		$allday = get_post_meta( get_the_ID(), '_event_allday', true );
 
 		// Convert unix time stamp to human readable formats
 		if ( ! empty( $start ) ) {
@@ -395,22 +395,22 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 			$allday     = ( isset( $_POST['em4wp-events-calendar-allday'] ) ? '1' : '0' );
 
 				$start_unix = absint( strtotime( $start ) );
-				update_post_meta( $post_id, 'em4wp_event_start',  $start_unix );
+				update_post_meta( $post_id, '_event_start',  $start_unix );
 			if ( ' ' != $start ) {
 			} else {
-//				delete_post_meta( $post_id, 'em4wp_event_start' );
+//				delete_post_meta( $post_id, '_event_start' );
 			}
 
 			if ( ' ' != $end ) {
 				$end_unix   = absint( strtotime( $end ) );
-				update_post_meta( $post_id, 'em4wp_event_end',    $end_unix   );
+				update_post_meta( $post_id, '_event_end',    $end_unix   );
 			} else {
-//				delete_post_meta( $post_id, 'em4wp_event_end' );
+//				delete_post_meta( $post_id, '_event_end' );
 			}
 //echo $start_unix.": ".$end_unix." - ";
-//echo get_post_meta( $post_id, 'em4wp_event_start', true );
+//echo get_post_meta( $post_id, '_event_start', true );
 //echo ' ... xxx';die;
-			update_post_meta( $post_id, 'em4wp_event_allday', $allday     );
+			update_post_meta( $post_id, '_event_allday', $allday     );
 		}
 	}
 
@@ -430,7 +430,7 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 		if ( $query->is_main_query() && !is_admin() && ( is_post_type_archive( 'event' ) || is_tax( 'event-category' ) ) ) {	
 			$meta_query = array(
 				array(
-					'key' => 'em4wp_event_end',
+					'key' => '_event_end',
 					'value' => (int) current_time( 'timestamp' ),
 					'compare' => '>'
 				)
@@ -438,7 +438,7 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 			$query->set( 'orderby', 'meta_value_num' );
 			$query->set( 'order', 'ASC' );
 			$query->set( 'meta_query', $meta_query );
-			$query->set( 'meta_key', 'em4wp_event_start' );
+			$query->set( 'meta_key', '_event_start' );
 		}
 	}
 
