@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Upcoming Events Widget.
+ * Read more meta.
  */
 class EM4WP_Read_More {
 
@@ -11,6 +11,7 @@ class EM4WP_Read_More {
 	public function __construct() {
 		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
 		add_action( 'save_post',      array( $this, 'meta_boxes_save' ), 10, 2 );
+		add_filter( 'the_content',    array( $this, 'the_content' ), 27 );
 	}
 
 	/**
@@ -78,6 +79,30 @@ class EM4WP_Read_More {
 		}
 
 		return $post_id;
+	}
+
+	/**
+	 * the_content() filter.
+	 *
+	 * @param  string  $content  The post content
+	 * @return string  The modified post content
+	 */
+	public function the_content( $content ) {
+
+		if ( 'event' != get_post_type() ) {
+			return;
+		}
+		$text = get_post_meta( get_the_ID(), '_read_more_text', true );
+		$url = get_post_meta( get_the_ID(), '_read_more_url', true );
+
+		if ( '' != $url && '' != $text ) {
+			$content .= '
+			<div class="em4wp-one-half">
+				<a href="' . esc_url( $url ) . '">' . $text . '</a>
+			</div>';
+		}
+
+		return $content;
 	}
 
 }

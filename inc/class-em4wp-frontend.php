@@ -31,7 +31,7 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 
 		// Show the start date/time
 		$content .= '
-		<div class="em4wp-date">
+		<div class="em4wp-one-half">
 			' . __( 'Start time: ', '' ) . date( get_option( 'date_format' ), $start );
 		if ( 1 != $allday ) {
 			$content .= ', ' . date( 'H:i:s', $start );
