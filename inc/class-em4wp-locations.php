@@ -14,7 +14,7 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 
 		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
 		add_action( 'save_post',      array( $this, 'meta_boxes_save' ), 10, 2 );
-		add_filter( 'the_content',    array( $this, 'the_content' ) );
+		add_filter( 'the_content',    array( $this, 'the_content' ), 30 );
 	}
 
 	/**
