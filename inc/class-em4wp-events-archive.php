@@ -12,13 +12,15 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 	 */
 	public function __construct() {
 
-		add_action( 'init', array( $this, 'rewrite_endpoint' ) );
+		add_action( 'init',              array( $this, 'rewrite_endpoint' ) );
+		add_action( 'template_redirect', array( $this, 'redirect_root' ) );
 
 		add_filter(
 			'query_vars',
 			function( $vars ) {
 				$vars[] = $this->get_option( 'permalink-archive' );
 				$vars[] = $this->get_option( 'permalink-upcoming' );
+				$vars[] = 'event';
 				return $vars;
 			}
 		);
@@ -41,6 +43,12 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 		add_rewrite_rule(
 			$this->get_option( 'permalink-slug' ) . '/' . $this->get_option( 'permalink-upcoming' ) . '/?$',
 			'index.php?post_type=event&' . $this->get_option( 'permalink-upcoming' ) . '=1',
+			'top'
+		);
+
+		add_rewrite_rule(
+			$this->get_option( 'permalink-slug' ) . '',
+			'index.php?event=redirect',
 			'top'
 		);
 
@@ -85,6 +93,19 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 		}
 
 		return $query;
+	}
+
+	/**
+	 * Redirect root to sub-folder.
+	 */
+	public function redirect_root() {
+
+		if ( 'redirect' == get_query_var( 'event' ) ) {
+			$url = home_url( '/' . $this->get_option( 'permalink-slug' ) . '/' . $this->get_option( 'permalink-upcoming' ) . '/' );
+			wp_redirect( $url, 302 );
+			exit;
+		}
+
 	}
 
 }
