@@ -24,7 +24,7 @@ class EM4WP_Event_Type extends EM4WP_Events_Core {
 			'event',
 			array(
 				'label'        => __( 'Event Type' ),
-				'rewrite'      => array( 'slug' => $taxonomy_slug ),
+				'rewrite'      => array( 'slug' => $this->taxonomy_slug ),
 				'hierarchical' => false,
 			)
 		);
