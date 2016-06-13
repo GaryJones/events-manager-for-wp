@@ -5,8 +5,6 @@
  */
 class EM4WP_Event_Type extends EM4WP_Events_Core {
 
-	public $taxonomy_slug = 'event-type';
-
 	/**
 	 * Class constructor.
 	 */
@@ -20,11 +18,11 @@ class EM4WP_Event_Type extends EM4WP_Events_Core {
 	 */
 	public function register_taxonomy() {
 		register_taxonomy(
-			$this->taxonomy_slug,
+			'event-type',
 			'event',
 			array(
 				'label'        => __( 'Event Type' ),
-				'rewrite'      => array( 'slug' => $taxonomy_slug ),
+				'rewrite'      => array( 'slug' => $this->get_option( 'permalink-taxonomy') ),
 				'hierarchical' => false,
 			)
 		);
@@ -43,7 +41,7 @@ class EM4WP_Event_Type extends EM4WP_Events_Core {
 		}
 
 		$terms = get_terms( array(
-			'taxonomy'   => $this->taxonomy_slug,
+			'taxonomy'   => 'event-type',
 			'hide_empty' => false,
 		) );
 

@@ -78,6 +78,15 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 						</td>
 					</tr>
 
+					<tr>
+						<th>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-taxonomy]"><?php _e( 'The taxonomy slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
+						</th>
+						<td>
+							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-taxonomy]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-taxonomy]" value="<?php echo esc_attr( $this->get_option( 'permalink-taxonomy' ) ); ?>" />
+						</td>
+					</tr>
+
 				</table>
 
 				<?php settings_fields( self::GROUP ); ?>
