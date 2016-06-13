@@ -62,7 +62,7 @@ class EM4WP_Read_More {
 	public function meta_boxes_save( $post_id, $post ) {
 
 		// Do nonce security check
-		if ( ! wp_verify_nonce( $_POST['read-more-nonce'], __FILE__ ) ) {
+		if ( ! isset( $_POST['read-more-nonce'] ) || ! wp_verify_nonce( $_POST['read-more-nonce'], __FILE__ ) ) {
 			return;
 		}
 
