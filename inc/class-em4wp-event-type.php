@@ -9,8 +9,28 @@ class EM4WP_Event_Type extends EM4WP_Events_Core {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		add_action( 'init',           array( $this, 'register_taxonomy' ) );
-		add_filter( 'the_content',    array( $this, 'the_content' ), 29 );
+		add_action( 'init', array( $this, 'register_taxonomy' ) );
+		add_action( 'init', array( $this, 'init' ) );
+	}
+
+	/**
+	 * init.
+	 */
+	public function init() {
+		if ( function_exists( 'genesis' ) ) {
+			add_action( 'genesis_entry_content', array( $this, 'genesis_content' ), 29 );
+		} else {
+			add_filter( 'the_content',    array( $this, 'the_content' ), 29 );
+		}
+	}
+
+	/**
+	 * Adding content differently for Genesis.
+	 * We use a hook here for Genesis instead of the normal the_content() filter.
+	 */
+	public function genesis_content() {
+		$content = $this->the_content( '' );
+		echo $content;
 	}
 
 	/**
