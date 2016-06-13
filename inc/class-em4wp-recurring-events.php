@@ -303,7 +303,7 @@
 	 * @param array $post
 	 */
 	public function metabox_save( $post_id, $post ) {
-		
+
 		// Security check
 		if ( ! isset( $_POST['em4wp_events_calendar_date_time_nonce'] ) || ! wp_verify_nonce( $_POST['em4wp_events_calendar_date_time_nonce'], 'em4wp_events_calendar_date_time' ) ) {
 			return;
