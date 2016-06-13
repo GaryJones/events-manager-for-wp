@@ -393,6 +393,9 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 			if ( ' ' == $end ) {
 				$end = $start;
 			}
+			if ( ' ' == $start ) {
+				$start = $end;
+			}
 			$allday     = ( isset( $_POST['em4wp-events-calendar-allday'] ) ? '1' : '0' );
 
 				$start_unix = absint( strtotime( $start ) );
