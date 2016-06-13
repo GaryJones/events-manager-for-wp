@@ -5,14 +5,10 @@
  */
 class EM4WP_Events_Archive extends EM4WP_Events_Core {
 
-	public $archive_slug;
-
 	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
-
-		$this->archive_slug = __( 'archive', 'events-manager-for-wp' );
 
 		add_action( 'init', array( $this, 'rewrite_endpoint' ) );
 
@@ -20,6 +16,7 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 			'query_vars',
 			function( $vars ) {
 				$vars[] = $this->get_option( 'permalink-archive' );
+				$vars[] = $this->get_option( 'permalink-upcoming' );
 				return $vars;
 			}
 		);
@@ -36,6 +33,12 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 		add_rewrite_rule(
 			$this->get_option( 'permalink-slug' ) . '/' . $this->get_option( 'permalink-archive' ) . '/?$',
 			'index.php?post_type=event&' . $this->get_option( 'permalink-archive' ) . '=1',
+			'top'
+		);
+
+		add_rewrite_rule(
+			$this->get_option( 'permalink-slug' ) . '/' . $this->get_option( 'permalink-upcoming' ) . '/?$',
+			'index.php?post_type=event&' . $this->get_option( 'permalink-upcoming' ) . '=1',
 			'top'
 		);
 
@@ -56,6 +59,19 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 					'key' => '_event_end',
 					'value' => (int) current_time( 'timestamp' ),
 					'compare' => '<'
+				)
+			);
+			$query->set( 'orderby', 'meta_value_num' );
+			$query->set( 'order', 'ASC' );
+			$query->set( 'meta_query', $meta_query );
+			$query->set( 'meta_key', '_event_start' );
+		} else if ( '' != get_query_var( $this->get_option( 'permalink-upcoming' ) ) && $query->is_main_query() && ! is_admin() && ( is_post_type_archive( 'event' ) || is_tax( 'event-category' ) ) ) {
+
+			$meta_query = array(
+				array(
+					'key' => '_event_end',
+					'value' => (int) current_time( 'timestamp' ),
+					'compare' => '>'
 				)
 			);
 			$query->set( 'orderby', 'meta_value_num' );

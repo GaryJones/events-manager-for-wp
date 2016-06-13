@@ -80,6 +80,15 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 
 					<tr>
 						<th>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-upcoming]"><?php _e( 'The upcoming slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
+						</th>
+						<td>
+							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-upcoming]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-upcoming]" value="<?php echo esc_attr( $this->get_option( 'permalink-upcoming' ) ); ?>" />
+						</td>
+					</tr>
+
+					<tr>
+						<th>
 							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-taxonomy]"><?php _e( 'The taxonomy slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
 						</th>
 						<td>
