@@ -18,7 +18,9 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 	 */
 	public function init() {
 		if ( function_exists( 'genesis' ) ) {
-//			add_action( 'genesis_entry_content', array( $this, 'genesis_wrapper_beginning' ), 29 );
+			add_action( 'genesis_entry_content', array( $this, 'genesis_wrapper_begin' ), 5 );
+			add_action( 'genesis_entry_content', array( $this, 'genesis_wrapper_end' ), 15 );
+			add_action( 'genesis_entry_content', array( $this, 'genesis_wrapper_end' ), 60 );
 			add_action( 'genesis_entry_content', array( $this, 'genesis_content' ), 29 );
 		} else {
 			add_filter( 'the_content',    array( $this, 'the_content' ), 29 );
@@ -28,10 +30,44 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 	}
 
 	/**
+	 * Adding beginning of content area for Genesis.
+	 * We use a hook here for Genesis instead of the normal the_content() filter.
+	 */
+	public function genesis_wrapper_begin() {
+
+		// Bail out now if not on event post-type
+		if ( 'event' != get_post_type() ) {
+			return;
+		}
+
+		echo '<div itemscope itemtype="http://schema.org/Event"><div itemprop="description">';
+	}
+
+	/**
+	 * Adding ending of content area for Genesis.
+	 * We use a hook here for Genesis instead of the normal the_content() filter.
+	 */
+	public function genesis_wrapper_end() {
+
+		// Bail out now if not on event post-type
+		if ( 'event' != get_post_type() ) {
+			return;
+		}
+
+		echo '</div>';
+	}
+
+	/**
 	 * Adding content differently for Genesis.
 	 * We use a hook here for Genesis instead of the normal the_content() filter.
 	 */
 	public function genesis_content() {
+
+		// Bail out now if not on event post-type
+		if ( 'event' != get_post_type() ) {
+			return;
+		}
+
 		$content = $this->the_content( '' );
 		echo $content;
 	}
