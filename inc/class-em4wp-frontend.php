@@ -18,11 +18,12 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 	 */
 	public function init() {
 		if ( function_exists( 'genesis' ) ) {
-			add_action( 'genesis_entry_content', array( $this, 'genesis_wrapper_beginning' ), 29 );
+//			add_action( 'genesis_entry_content', array( $this, 'genesis_wrapper_beginning' ), 29 );
 			add_action( 'genesis_entry_content', array( $this, 'genesis_content' ), 29 );
 		} else {
 			add_filter( 'the_content',    array( $this, 'the_content' ), 29 );
 			add_filter( 'the_content',    array( $this, 'the_content_wrapper' ), 50 );
+			add_filter( 'the_content',    array( $this, 'the_content_description_wrapper' ), 10 );
 		}
 	}
 
@@ -92,6 +93,26 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 	 * @param  string  $content  The post content
 	 * @return string  The modified post content
 	 */
+	public function the_content_description_wrapper( $content ) {
+
+		// Bail out now if not on event post-type
+		if ( 'event' != get_post_type() ) {
+			return $content;
+		}
+
+		$content = '<div itemprop="description">' . $content . '</div>';
+
+		return $content;
+	}
+
+	/**
+	 * the_content() wrapper filter.
+	 * Wraps the content in a schema.org markup div.
+	 * This will break some sites, but users may unhook this filter if required.
+	 *
+	 * @param  string  $content  The post content
+	 * @return string  The modified post content
+	 */
 	public function the_content_wrapper( $content ) {
 
 		// Bail out now if not on event post-type
@@ -99,7 +120,7 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 			return $content;
 		}
 
-		$content = '<div itemscope itemtype="http://schema.org/Event"><div itemprop="description">' . $content . '</div></div>';
+		$content = '<div itemscope itemtype="http://schema.org/Event">' . $content . '</div>';
 
 		return $content;
 	}
