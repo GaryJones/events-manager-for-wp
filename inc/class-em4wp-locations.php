@@ -185,7 +185,6 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 			return $content;
 		}
 
-
 		$location = get_post_meta( get_the_ID(), '_location', true );
 		if ( isset( $location['display'] ) && 1 == $location['display'] && isset( $location['latitude'] ) && isset( $location['longitude'] ) ) {
 
