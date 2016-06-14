@@ -12,3 +12,14 @@ A calendar can be displayed on a page through use of the `[events-calendar]` sho
 
 # Widget
 The plugin includes an upcoming events widget. The widget includes settings for the title, number of events and button text for the "view all events" button.
+
+# Modifying schema.org markup
+
+The following example will allow you to edit the schema.org event description markup.
+```<?php
+
+add_filter( 'the_content', 'replace_markup' );
+function replace_markup( $content ) {
+    $content = str_replace( '<div itemprop="description">', '<div itemprop="something-else">', $content );
+    return $content;
+}```
