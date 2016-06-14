@@ -11,7 +11,33 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 	public function __construct() {
 		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
 		add_action( 'save_post',      array( $this, 'meta_boxes_save' ), 10, 2 );
-		add_filter( 'the_content',    array( $this, 'the_content' ), 30 );
+		add_action( 'init',           array( $this, 'init' ) );
+	}
+
+	/**
+	 * init.
+	 */
+	public function init() {
+		if ( function_exists( 'genesis' ) ) {
+			add_action( 'genesis_entry_content', array( $this, 'genesis_content' ), 30 );
+		} else {
+			add_filter( 'the_content',    array( $this, 'the_content' ), 30 );
+		}
+	}
+
+	/**
+	 * Adding content differently for Genesis.
+	 * We use a hook here for Genesis instead of the normal the_content() filter.
+	 */
+	public function genesis_content() {
+
+		// Bail out now if not on event post-type
+		if ( 'event' != get_post_type() ) {
+			return;
+		}
+
+		$content = $this->the_content( '' );
+		echo $content;
 	}
 
 	/**
