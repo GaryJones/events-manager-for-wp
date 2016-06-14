@@ -195,7 +195,7 @@ class EM4WP_Locations extends EM4WP_Events_Core {
 			if ( '' != $latitude && '' != $longitude ) {
 
 				$content .= '
-				<div class="em4wp-full">
+				<div class="em4wp-full" itemscope itemtype="http://schema.org/Place">
 					<h3>' . __( 'Event location', 'events-manager-for-wp' ) . '</h3>';
 
 				$embed_url = 'https://maps.google.com/maps?q=' . $latitude . ',' . $longitude . '&z=14&output=embed&iwloc=0';
