@@ -31,6 +31,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
+// Bail out if file called directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'Whatcha doin?' );
+}
+
 // Define plugin constants
 define( 'EM4WP_EVENTS_CALENDAR_VERSION', '1.1.0' );
 define( 'EM4WP_EVENTS_CALENDAR_DIR', plugin_dir_path( __FILE__ ) );
