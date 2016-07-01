@@ -56,9 +56,6 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 			'index.php?post_type=event&' . $this->get_option( 'permalink-archive' ) . '=1',
 			'top'
 		);
- // add_rewrite_rule(
-//		'^leaf/([0-9]+)/?',
-//		'index.php?page_id=$matches[1]', 'top');
 
 		add_rewrite_rule(
 			$this->get_option( 'permalink-landing' ) . '/' . $this->get_option( 'permalink-archive' ) . '/page/([0-9]+)/?',
