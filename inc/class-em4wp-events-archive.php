@@ -80,6 +80,12 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 
 		if ( '' != get_query_var( $this->get_option( 'permalink-archive' ) ) && $query->is_main_query() && ! is_admin() && ( is_post_type_archive( 'event' ) || is_tax( 'event-category' ) ) ) {
 
+
+echo 'NEED TO SET OFFSET FOR permalink-archive here, so that archive pagination works as intended';
+die;
+//$this->get_option( 'permalink-archive' )
+
+
 			$meta_query = array(
 				array(
 					'key' => '_event_end',
