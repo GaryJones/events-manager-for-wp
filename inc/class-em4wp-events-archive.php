@@ -30,13 +30,13 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 	public function rewrite_endpoint() {
 //echo $this->get_option( 'permalink-slug' ) . '/' . $this->get_option( 'permalink-archive' ) . '/?$';die;
 		add_rewrite_rule(
-			$this->get_option( 'permalink-slug' ) . '/' . $this->get_option( 'permalink-archive' ) . '/?$',
+			$this->get_option( 'permalink-landing' ) . '/' . $this->get_option( 'permalink-archive' ) . '/?$',
 			'index.php?post_type=event&' . $this->get_option( 'permalink-archive' ) . '=1',
 			'top'
 		);
 
 		add_rewrite_rule(
-			'event-archive/?$',
+			$this->get_option( 'permalink-landing' ) . '/?$',
 			'index.php?post_type=event',
 			'top'
 		);

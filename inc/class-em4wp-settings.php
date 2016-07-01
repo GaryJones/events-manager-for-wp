@@ -87,6 +87,15 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 						</td>
 					</tr>
 
+					<tr>
+						<th>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-landing]"><?php _e( 'URL for landing page listing events.', 'events-manager-for-wp' ); ?></label>
+						</th>
+						<td>
+							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-landing]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-landing]" value="<?php echo esc_attr( $this->get_option( 'permalink-landing' ) ); ?>" />
+						</td>
+					</tr>
+
 				</table>
 
 				<?php settings_fields( self::GROUP ); ?>
