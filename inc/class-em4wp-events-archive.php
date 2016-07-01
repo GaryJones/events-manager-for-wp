@@ -11,6 +11,7 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 	public function __construct() {
 
 		add_action( 'init', array( $this, 'rewrite_endpoint' ) );
+		add_action( 'template_redirect', array( $this, 'redirect_endpoint' ) );
 
 		add_filter(
 			'query_vars',
@@ -24,11 +25,31 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 
 	}
 
+	public function redirect_endpoint() {
+
+		$url_bits = explode( '/', get_option( 'siteurl' ) );
+		$site_path = $url_bits[3];
+
+		$path = '/';
+		if ( ! empty( $site_path ) ) {
+			$path .= $site_path . '/';
+		}
+		$path .= $this->get_option( 'permalink-slug' ) . '/';
+
+		// On primary archive URL
+		if ( $path == $_SERVER['REQUEST_URI'] ) {
+			$url = home_url() . '/' . $this->get_option( 'permalink-landing' ) . '/';
+			wp_redirect( esc_url( $url ), 302 );
+			exit;
+		}
+
+	}
+
 	/**
 	 * Rewriting the archive URLs.
 	 */
 	public function rewrite_endpoint() {
-//echo $this->get_option( 'permalink-slug' ) . '/' . $this->get_option( 'permalink-archive' ) . '/?$';die;
+
 		add_rewrite_rule(
 			$this->get_option( 'permalink-landing' ) . '/' . $this->get_option( 'permalink-archive' ) . '/?$',
 			'index.php?post_type=event&' . $this->get_option( 'permalink-archive' ) . '=1',
