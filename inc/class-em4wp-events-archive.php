@@ -26,6 +26,7 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 	}
 
 	public function redirect_endpoint() {
+//global $wp;print_r( $wp );die;
 
 		$url_bits = explode( '/', get_option( 'siteurl' ) );
 		$site_path = $url_bits[3];
@@ -53,6 +54,15 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 		add_rewrite_rule(
 			$this->get_option( 'permalink-landing' ) . '/' . $this->get_option( 'permalink-archive' ) . '/?$',
 			'index.php?post_type=event&' . $this->get_option( 'permalink-archive' ) . '=1',
+			'top'
+		);
+ // add_rewrite_rule(
+//		'^leaf/([0-9]+)/?',
+//		'index.php?page_id=$matches[1]', 'top');
+
+		add_rewrite_rule(
+			$this->get_option( 'permalink-landing' ) . '/' . $this->get_option( 'permalink-archive' ) . '/page/([0-9]+)/?',
+			'index.php?post_type=event&' . $this->get_option( 'permalink-archive' ) . '=$matches[1]',
 			'top'
 		);
 
