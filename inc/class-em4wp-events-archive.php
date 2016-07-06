@@ -26,7 +26,6 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 	}
 
 	public function redirect_endpoint() {
-//global $wp;print_r( $wp );die;
 
 		$url_bits = explode( '/', get_option( 'siteurl' ) );
 		$site_path = $url_bits[3];
@@ -80,9 +79,12 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 
 		if ( '' != get_query_var( $this->get_option( 'permalink-archive' ) ) && $query->is_main_query() && ! is_admin() && ( is_post_type_archive( 'event' ) || is_tax( 'event-category' ) ) ) {
 
-
-echo 'NEED TO SET OFFSET FOR permalink-archive here, so that archive pagination works as intended';
-die;
+			if ( '1' != get_query_var( $this->get_option( 'permalink-archive' ) ) ) {
+				$paged = get_query_var( $this->get_option( 'permalink-archive' ) ) - 1;
+			} else {
+				$paged = 0;
+			}
+//echo 'NEED TO SET OFFSET FOR permalink-archive here, so that archive pagination works as intended';die;
 //$this->get_option( 'permalink-archive' )
 
 
@@ -93,6 +95,9 @@ die;
 					'compare' => '<'
 				)
 			);
+
+$query->set( 'offset', $paged * get_option( 'posts_per_page' ) );
+//$query->set( 'posts_per_page', 2 );
 			$query->set( 'orderby', 'meta_value_num' );
 			$query->set( 'order', 'ASC' );
 			$query->set( 'meta_query', $meta_query );
