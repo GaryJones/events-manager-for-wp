@@ -3,7 +3,7 @@
 Plugin Name: Events Manager for WordPress
 Plugin URI: https://forsite.media/
 Description: Events Manager for WordPress
-Version: 1.0
+Version: 1.1.0
 Author: Forsite Media
 Author URI: https://forsite.media/
 License: GPLv2 or later
