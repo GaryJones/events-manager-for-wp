@@ -25,9 +25,18 @@ class EM4WP_Events_Archive extends EM4WP_Events_Core {
 
 	}
 
+	/**
+	 * If end point is present, then perform redirect.
+	 */
 	public function redirect_endpoint() {
 
 		$url_bits = explode( '/', get_option( 'siteurl' ) );
+
+		// Bail out if no end point present
+		if ( ! isset( $url_bits[3] ) ) {
+			return;
+		}
+
 		$site_path = $url_bits[3];
 
 		$path = '/';
