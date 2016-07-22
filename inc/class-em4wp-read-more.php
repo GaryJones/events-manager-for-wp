@@ -90,8 +90,9 @@ class EM4WP_Read_More {
 	public function the_content( $content ) {
 
 		if ( 'event' != get_post_type() ) {
-			return;
+			return $content;
 		}
+
 		$text = get_post_meta( get_the_ID(), '_read_more_text', true );
 		$url = get_post_meta( get_the_ID(), '_read_more_url', true );
 
