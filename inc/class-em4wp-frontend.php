@@ -93,26 +93,26 @@ class EM4WP_Frontend extends EM4WP_Events_Core {
 		$content .= '
 		<div class="em4wp-one-half">
 			<h3>' . __( 'Date', 'events-manager-for-wp' ) . '</h3>
-			' . __( 'Start time: ', '' ) . '
-			<time itemprop="startDate" content="2016-06-11T14:30">' . date( get_option( 'date_format' ), $start );
+			<ul><li>' . __( 'Start: ', '' ) . '
+			<time itemprop="startDate" content="' . date( 'c', $start ) . '">' . date( get_option( 'date_format' ), $start );
 
 		if ( 1 != $allday ) {
-			$content .= ', ' . date( 'H:i:s', $start );
+			$content .= ', ' . __( 'at ', 'events-manager-for-wp' ) . date( 'H:i', $start );
 		}
 
-		$content .= '</time>';
+		$content .= '</time></li>';
 
 		// Show the end date/time
 		if ( '' != $end ) {
 			$content .= '
-			' . __( 'End time: ', '' ) . '
-			<time itemprop="endDate" content="2016-06-11T17:00">' . date( get_option( 'date_format' ), $end );
+			<li>' . __( 'End: ', '' ) . '
+			<time itemprop="endDate" content="' . date( 'c', $end ) . '">' . date( get_option( 'date_format' ), $end );
 
 			if ( 1 != $allday ) {
-				$content .= ', ' . date( 'H:i:s', $end );
+				$content .= ', ' . __( 'at ', 'events-manager-for-wp' ) . date( 'H:i', $end );
 			}
 
-			$content .= '</time>';
+			$content .= '</time></li></ul>';
 		}
 
 		$content .= '

@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Events Manager for WordPress
-Plugin URI: https://forsite.media/
+Plugin URI: https://github.com/forsitemedia/events-manager-for-wp/
 Description: Events Manager for WordPress
-Version: 1.1.0
+Version: 1.2.0
 Author: Forsite Media
 Author URI: https://forsite.media/
 License: GPLv2 or later
@@ -12,7 +12,7 @@ Text Domain: events-manager-for-wordpress
 
 /*
 
-Plugins code is based on BE Events Calendar (c) 2014, Bill Erickson <bill@billerickson.net>.
+Plugins code is loosly based on BE Events Calendar (c) 2014, Bill Erickson <bill@billerickson.net>.
 https://github.com/billerickson/BE-Events-Calendar
 
 This program is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'EM4WP_EVENTS_CALENDAR_VERSION', '1.1.0' );
+define( 'EM4WP_EVENTS_CALENDAR_VERSION', '1.2.0' );
 define( 'EM4WP_EVENTS_CALENDAR_DIR', plugin_dir_path( __FILE__ ) );
 define( 'EM4WP_EVENTS_CALENDAR_URL', plugin_dir_url( __FILE__ ) );
 define( 'EM4WP_EVENTS_CALENDAR_PLUGIN_FILE', __FILE__ );

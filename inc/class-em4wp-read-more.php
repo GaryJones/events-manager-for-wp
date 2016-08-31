@@ -9,7 +9,7 @@ class EM4WP_Read_More {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ), 12 );
 		add_action( 'save_post',      array( $this, 'meta_boxes_save' ), 10, 2 );
 		add_filter( 'the_content',    array( $this, 'the_content' ), 27 );
 	}
@@ -20,14 +20,14 @@ class EM4WP_Read_More {
 	public function add_metabox() {
 		add_meta_box(
 			'read_more', // ID
-			__( 'Read more box', 'events-manager-for-wp' ), // Title
+			__( 'External Event Information', 'events-manager-for-wp' ), // Title
 			array(
 				$this,
 				'meta_box', // Callback to method to display HTML
 			),
-			'event', // Post type
-			'side', // Context, choose between 'normal', 'advanced', or 'side'
-			'low'  // Position, choose between 'high', 'core', 'default' or 'low'
+			'event', 
+			'side',
+			'high'
 		);
 	}
 
@@ -39,7 +39,7 @@ class EM4WP_Read_More {
 		?>
 
 		<p>
-			<label for="_read_more_text"><strong><?php _e( 'Text', 'events-manager-for-wp' ); ?></strong></label>
+			<label for="_read_more_text"><strong><?php _e( 'Link Text', 'events-manager-for-wp' ); ?></strong></label>
 			<br />
 			<input type="text" name="_read_more_text" id="_read_more_text" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_read_more_text', true ) ); ?>" />
 		</p>
@@ -90,8 +90,9 @@ class EM4WP_Read_More {
 	public function the_content( $content ) {
 
 		if ( 'event' != get_post_type() ) {
-			return;
+			return $content;
 		}
+
 		$text = get_post_meta( get_the_ID(), '_read_more_text', true );
 		$url = get_post_meta( get_the_ID(), '_read_more_url', true );
 

@@ -110,12 +110,12 @@ class EM4WP_Genesis_Schema extends EM4WP_Events_Core {
 
 		$start = get_post_meta( get_the_ID(), '_event_start', true );
 		if ( $start ) {
-			echo '<meta itemprop="startDate" content="' . date('c', $start ).'">';
+			echo '<meta itemprop="startDate" content="' . date( 'c', $start ) .'">';
 		}
 
 		$end = get_post_meta( get_the_ID(), '_event_end', true );
 		if ( $end ) {
-			echo '<meta itemprop="endDate" content="' . date( 'c', $end ).'">';
+			echo '<meta itemprop="endDate" content="' . date( 'c', $end ) .'">';
 		}
 
 	}

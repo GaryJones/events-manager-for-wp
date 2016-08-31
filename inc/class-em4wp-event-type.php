@@ -62,7 +62,7 @@ class EM4WP_Event_Type extends EM4WP_Events_Core {
 
 		$terms = get_terms( array(
 			'taxonomy'   => 'event-type',
-			'hide_empty' => false,
+			'hide_empty' => true,
 		) );
 
 		if ( $terms ) {
