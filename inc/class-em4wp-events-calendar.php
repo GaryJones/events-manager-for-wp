@@ -90,7 +90,7 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 			'has_archive'        => true, 
 			'hierarchical'       => false,
 			'menu_position'      => null,
-			'supports'           => array( 'title', 'editor' ),
+				'supports'              => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', 'genesis-layouts', 'genesis-seo', 'genesis-simple-sidebars', 'genesis-cpt-archives-settings' ),
 			'menu_icon'          => 'dashicons-calendar',
 		); 
 
