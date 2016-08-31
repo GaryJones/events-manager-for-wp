@@ -20,6 +20,7 @@ class EM4WP_Events_Core {
 				'permalink-slug'     => 'event',
 				'permalink-archive'  => 'archive',
 				'permalink-taxonomy' => 'event-type',
+				'permalink-landing' => 'events',
 			);
 			add_option( $this->slug, $defaults );
 		}

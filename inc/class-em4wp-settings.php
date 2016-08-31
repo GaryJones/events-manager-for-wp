@@ -54,7 +54,7 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 		?>
 		<div class="wrap">
 			<h1><?php _e( 'Events Manager for WordPress settings', 'events-manager-for-wp' ); ?></h1>
-			<p><?php _e( 'Control the events settings here.', 'events-manager-for-wp' ); ?></p>
+			<p><?php _e( 'Control the events settings here. You will need to refresh your permalinks when you have made changes here', 'events-manager-for-wp' ); ?></p>
 
 			<form method="post" action="options.php">
 
@@ -62,7 +62,7 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 
 					<tr>
 						<th>
-							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]"><?php _e( 'The Single Event Slug', 'events-manager-for-wp' ); ?></label>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]"><?php _e( 'Single Event Slug prefix', 'events-manager-for-wp' ); ?></label>
 						</th>
 						<td>
 						<p><?php _e( 'This is what comes before a single event slug shown in URLs.', 'events-manager-for-wp' ); ?></p>
@@ -72,7 +72,7 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 
 					<tr>
 						<th>
-							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]"><?php _e( 'The Archive Slug.', 'events-manager-for-wp' ); ?></label>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]"><?php _e( 'Archive Slug', 'events-manager-for-wp' ); ?></label>
 						</th>
 						<td>
 						<p><?php _e( 'Events that are in the past will be displayed at an archive slug.', 'events-manager-for-wp' ); ?></p>
