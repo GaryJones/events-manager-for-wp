@@ -21,4 +21,5 @@ add_filter( 'the_content', 'replace_markup' );
 function replace_markup( $content ) {
     $content = str_replace( '<div itemprop="description">', '<div itemprop="something-else">', $content );
     return $content;
-}```
+}
+```

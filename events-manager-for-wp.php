@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Events Manager for WordPress
-Plugin URI: https://forsite.media/
+Plugin URI: https://github.com/forsitemedia/events-manager-for-wp/
 Description: Events Manager for WordPress
 Version: 1.1.0
 Author: Forsite Media
@@ -12,7 +12,7 @@ Text Domain: events-manager-for-wordpress
 
 /*
 
-Plugins code is based on BE Events Calendar (c) 2014, Bill Erickson <bill@billerickson.net>.
+Plugins code is loosly based on BE Events Calendar (c) 2014, Bill Erickson <bill@billerickson.net>.
 https://github.com/billerickson/BE-Events-Calendar
 
 This program is free software; you can redistribute it and/or
