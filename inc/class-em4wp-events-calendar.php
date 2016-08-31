@@ -72,10 +72,10 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 			'new_item'           => __( 'New Event', 'events-manager-for-wp' ),
 			'view_item'          => __( 'View Event', 'events-manager-for-wp' ),
 			'search_items'       => __( 'Search Events', 'events-manager-for-wp' ),
-			'not_found'          => __( 'No events found', 'events-manager-for-wp' ),
-			'not_found_in_trash' => __( 'No events found in trash', 'events-manager-for-wp' ),
+			'not_found'          => __( 'No Events found', 'events-manager-for-wp' ),
+			'not_found_in_trash' => __( 'No Events found in trash', 'events-manager-for-wp' ),
 			'parent_item_colon'  => '',
-			'menu_name'          => __( 'Events', 'events-manager-for-wp' )
+			'menu_name'          => __( 'Events Manager', 'events-manager-for-wp' )
 		);
 
 		$args = array(
@@ -139,7 +139,7 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 
 				/* If no duration is found, output a default message. */
 				if ( empty( $start ) )
-					echo __( 'Unknown' );
+					echo __( 'Unknown', 'events-manager-for-wp' );
 
 				/* If there is a duration, append 'minutes' to the text string. */
 				else
@@ -246,7 +246,7 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 		global $post;
 
 		if ( isset( $post ) && 'event' == $post->post_type && 'Enter title here' == $translation ) {
-			$translation = 'Enter Event Name Here';
+			$translation = __( 'Enter Event Name Here', 'events-manager-for-wp' );
 		}
 		return $translation;
 	}
@@ -264,17 +264,17 @@ class EM4WP_Events_Calendar extends EM4WP_Events_Core {
 		$post_types = in_array( 'recurring-events', $supports[0] ) ? array( 'event', 'recurring-events' ) : array( 'event' );
 
 		$labels = array(
-			'name'              => 'Categories',
-			'singular_name'     => 'Category',
-			'search_items'      => 'Search Categories',
-			'all_items'         => 'All Categories',
-			'parent_item'       => 'Parent Category',
-			'parent_item_colon' => 'Parent Category:',
-			'edit_item'         => 'Edit Category',
-			'update_item'       => 'Update Category',
-			'add_new_item'      => 'Add New Category',
-			'new_item_name'     => 'New Category Name',
-			'menu_name'         => 'Category'
+			'name'              => __( 'Categories', 'events-manager-for-wp' ),
+			'singular_name'     => __( 'Category', 'events-manager-for-wp' ),
+			'search_items'      => __( 'Search Categories', 'events-manager-for-wp' ),
+			'all_items'         => __( 'All Categories', 'events-manager-for-wp' ),
+			'parent_item'       => __( 'Parent Category', 'events-manager-for-wp' ),
+			'parent_item_colon' => __( 'Parent Category:', 'events-manager-for-wp' ),
+			'edit_item'         => __( 'Edit Category', 'events-manager-for-wp' ),
+			'update_item'       => __( 'Update Category', 'events-manager-for-wp' ),
+			'add_new_item'      => __( 'Add New Category', 'events-manager-for-wp' ),
+			'new_item_name'     => __( 'New Category Name', 'events-manager-for-wp' ),
+			'menu_name'         => __( 'Category', 'events-manager-for-wp' ),
 		); 	
 	
 		register_taxonomy( 'event-category', $post_types, array(

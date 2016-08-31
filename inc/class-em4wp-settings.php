@@ -53,7 +53,7 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 
 		?>
 		<div class="wrap">
-			<h1><?php _e( 'Events settings', 'events-manager-for-wp' ); ?></h1>
+			<h1><?php _e( 'Events Manager for WordPress settings', 'events-manager-for-wp' ); ?></h1>
 			<p><?php _e( 'Control the events settings here.', 'events-manager-for-wp' ); ?></p>
 
 			<form method="post" action="options.php">
@@ -62,36 +62,40 @@ class EM4WP_Settings extends EM4WP_Events_Core {
 
 					<tr>
 						<th>
-							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]"><?php _e( 'The event slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]"><?php _e( 'The Single Event Slug', 'events-manager-for-wp' ); ?></label>
 						</th>
 						<td>
+						<p><?php _e( 'This is what comes before a single event slug shown in URLs.', 'events-manager-for-wp' ); ?></p>
 							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-slug]" value="<?php echo esc_attr( $this->get_option( 'permalink-slug' ) ); ?>" />
 						</td>
 					</tr>
 
 					<tr>
 						<th>
-							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]"><?php _e( 'The archive slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]"><?php _e( 'The Archive Slug.', 'events-manager-for-wp' ); ?></label>
 						</th>
 						<td>
+						<p><?php _e( 'Events that are in the past will be displayed at an archive slug.', 'events-manager-for-wp' ); ?></p>
 							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-archive]" value="<?php echo esc_attr( $this->get_option( 'permalink-archive' ) ); ?>" />
 						</td>
 					</tr>
 
 					<tr>
 						<th>
-							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-taxonomy]"><?php _e( 'The taxonomy slug shown in URLs.', 'events-manager-for-wp' ); ?></label>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-taxonomy]"><?php _e( 'Event Types prefix', 'events-manager-for-wp' ); ?></label>
 						</th>
 						<td>
+						<p><?php _e( 'Event Types archives are displayed after this slug.', 'events-manager-for-wp' ); ?></p>
 							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-taxonomy]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-taxonomy]" value="<?php echo esc_attr( $this->get_option( 'permalink-taxonomy' ) ); ?>" />
 						</td>
 					</tr>
 
 					<tr>
 						<th>
-							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-landing]"><?php _e( 'URL for landing page listing events.', 'events-manager-for-wp' ); ?></label>
+							<label for="<?php echo esc_attr( $this->slug ); ?>[permalink-landing]"><?php _e( 'Events Overview slug', 'events-manager-for-wp' ); ?></label>
 						</th>
 						<td>
+						<p><?php _e( 'The Overview of Events are displayed at this slug.', 'events-manager-for-wp' ); ?></p>
 							<input type="text" id="<?php echo esc_attr( $this->slug ); ?>[permalink-landing]" name="<?php echo esc_attr( $this->slug ); ?>[permalink-landing]" value="<?php echo esc_attr( $this->get_option( 'permalink-landing' ) ); ?>" />
 						</td>
 					</tr>

@@ -56,6 +56,7 @@ class EM4WP_Events_Calendar_View {
 			'aspectRatio'    => '2',
 			'fixedWeekCount' => 'false',
 		);
+		
 		$calendar_args = apply_filters( 'em4wp_events_calendar_view_js_args', $calendar_args );
 		?>
 		<script type="text/javascript">
