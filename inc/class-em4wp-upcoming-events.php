@@ -96,7 +96,12 @@ class EM4WP_Upcoming_Events extends WP_Widget {
 	 **/
 	public function form( $instance ) {
 
-		$defaults = array( 'title' => 'Upcoming Events', 'count' => 2, 'more_text' => 'View All Event Information (leave blank for no link)' );
+		$defaults = array( 
+			'title' 	=> 'Upcoming Events', 
+			'count' 	=> 2, 
+			'more_text' => 'View All Event Information (leave blank for no link).' 
+			);
+
 		$instance = wp_parse_args( (array) $instance, $defaults ); 
 
 		echo '<p><label for="' . $this->get_field_id( 'title' ) . '">Title: <input class="widefat" id="' . $this->get_field_id( 'title' ) .'" name="' . $this->get_field_name( 'title' ) . '" value="' . esc_attr( $instance['title'] ) . '" /></label></p>';
@@ -106,7 +111,11 @@ class EM4WP_Upcoming_Events extends WP_Widget {
 	}
 }
 
-function em4wp_register_upcoming_events_widget() {
-	register_widget('EM4WP_Upcoming_Events');
-}
 add_action( 'widgets_init', 'em4wp_register_upcoming_events_widget' );
+/**
+ * Regster the Upcoming Events Widget
+ */
+function em4wp_register_upcoming_events_widget() {
+	register_widget( 'EM4WP_Upcoming_Events' );
+}
+
